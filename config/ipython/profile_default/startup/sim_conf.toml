@@ -1,0 +1,17 @@
+[loaders]
+"PrettyMotor" = "caproto.ioc_examples.fake_motor_record.FakeMotor"
+"ADCBuffer" = "nbs_sim.devices.detectors.SSTADC"
+"EPS_Shutter" = "nbs_sim.devices.shutters.SSTShutter"
+"NewEnPos" = "nbs_sim.devices.energy.SST1Energy"
+"MultiMeshBuilder" = "nbs_sim.devices.manipulator.MultiMesh"
+"ManipulatorBuilder" = "nbs_sim.devices.manipulator.Manipulator"
+"EpicsMCABase" = "nbs_sim.devices.caproto_mca.MCASIM"
+
+[devices]
+Exit_Slit = {_target = "nbs_sim.devices.slits.Slit", trans_min = 0, trans_max = 40, _group="apertures", _role="slits", user_limits=[0, 40]}
+ring_current = {_target = "nbs_sim.devices.signals.RingCurrent"}
+i0 = {kind="i0"}
+i1 = {kind="i1"}
+ref = {kind="ref"}
+en = {_role="energy"}
+tes = {_target = "nbs_sim.devices.caproto_mca.MCASIM", _group = "detectors", name = "tes_mca", prefix = "SIM_SST:tesmca:"}

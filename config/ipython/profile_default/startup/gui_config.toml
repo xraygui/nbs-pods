@@ -1,0 +1,32 @@
+[gui.tabs]
+include = ["nbs-gui-queue", "kafka-table-tab", "nbs-gui-console", "nbs-gui-monitor", "nbs-gui-motors", "nbs-gui-plans", "nbs-gui-samples"]
+
+[models.beamline]
+primary_energy = "en"
+primary_manipulator = "manipulator"
+loader = "nbs_bl.qt.models.beamline.SSTBeamlineModel"
+
+[devices]
+psh1 = { visible = false }
+psh4 = { visible = false }
+Exit_Slit = { label = "Exit Slit" }
+en = {"_role" = "energy"}
+
+[loaders]
+"NewEnPos" = "ucal.qt.models.energy.EnergyModel"
+"I400SingleCh" = "nbs_gui.models.ScalarModel"
+"PrettyMotorFMBO" = "nbs_gui.models.MotorModel"
+"FMBHexapodMirror" = "nbs_gui.models.ManipulatorModel"
+"EpicsSignalRO" = "nbs_gui.models.PVModel"
+"EpicsSignal" = "nbs_gui.models.PVModel"
+"ShutterSet" = "nbs_gui.models.GVModel"
+"EPS_Shutter" = "nbs_gui.models.GVModel"
+"ManipulatorBuilder" = "nbs_gui.models.ManipulatorModel"
+"ADCBuffer" = "nbs_gui.models.ScalarModel"
+"PrettyMotor" = "nbs_gui.models.MotorModel"
+"StandardProsilicaV33" = "nbs_gui.models.PVModel"
+"MultiMeshBuilder" = "nbs_gui.models.ManipulatorModel"
+
+[kafka]
+config_file = "/etc/bluesky/kafka.yml"
+bl_acronym = "nbs"

@@ -1,0 +1,61 @@
+[dastard]
+default_source = "abaco"
+available_sources = ["abaco", "simulation"]
+host = "dastard"
+port = 5500
+
+[dastard.pulseTrigger]
+EdgeMulti = true
+EdgeMultiLevel = 50
+EdgeMultiVerifyNMonotone = 6
+
+[dastard.noiseTrigger]
+AutoTrigger = true
+AutoDelay = 0
+
+[dastard.pulseLengths]
+Nsamp = 1024
+Npre = 512
+
+[dastard.writeControl]
+WriteLJH22 = false
+WriteOFF = true
+
+[dastard.lancero]
+ActiveCards = [0]
+ChanSepColumns = 0
+ChanSepCards = 0
+FirstRow = 1
+CardDelay = [1]
+ClockMHz = 125
+Nsamp = 4
+
+[dastard.abaco]
+HostPortUDP = ["10.0.15.100:4001"]
+Unwrap = true
+ResetAfter = 2000
+PulseSign = 1
+Bias = true
+RescaleRaw = true
+InvertChan = []
+
+[dastard.simulation]
+Nchan = 4
+SampleRate = 2000
+Pedestal = 200
+Amplitudes = [2000, 4000]
+Nsamp = 1024
+
+[tes]
+base_user_output_dir = "~/userout"
+server_log_dir = "~/.scan_server"
+projector_filename = "~/.scan_server/nsls_projectors.hdf5"
+programs_to_check = ["dcom", "dastard", "cringe"]
+adr = false
+cringe = false
+beamtime_id = 1
+write_ljh = true
+write_off = true
+
+[epics]
+prefix = "SIM_SST:TES:"

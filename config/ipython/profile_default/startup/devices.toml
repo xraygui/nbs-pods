@@ -1,0 +1,240 @@
+[adr]
+_target = "sst_base.sim.DummyObject"
+prefix = "SIM_SST:adr"
+name = "adr"
+long_name = "TES Cryostat"
+
+[tes]
+_target = "sst_tes.mca_tes.TESMCAFactory"
+_group = "detectors"
+name = "tes"
+prefix = "SIM_SST:TES:"
+mcaPrefix = "SIM_SST:tesmca:"
+address = "localhost"
+path = "/data/raw"
+setFilenamePattern = false
+port = 4000
+
+[i0]
+_target = "sst_base.detectors.scalar.ADCBuffer"
+_group = "detectors"
+_role = "intensity_detector"
+prefix = "SIM_SST:i0:"
+name = "ucal_i0up"
+
+[i1]
+_target = "sst_base.detectors.scalar.ADCBuffer"
+_group = "detectors"
+_role = "alignment_detector"
+prefix = "SIM_SST:i1:"
+name = "ucal_i1"
+
+[ref]
+_target = "sst_base.detectors.scalar.ADCBuffer"
+_group = "detectors"
+prefix = "SIM_SST:ref:"
+name = "ucal_ref"
+
+[sc]
+_target = "sst_base.detectors.scalar.ADCBuffer"
+_group = "detectors"
+prefix = "SIM_SST:sc:"
+name = "ucal_sc"
+long_name = "Sample Drain Current"
+
+[en]
+_target = "ucal_sim.energy.NewEnPos"
+_group = "source"
+prefix = "SIM_SST:energy:"
+long_name = "SST Energy"
+name = "en"
+
+[gv26]
+_target = "sst_base.sim.DummyObject"
+_group = "gatevalves"
+prefix = "XF:07IDB-VA:2{Mir:M3C-GV:1}"
+name = "gv26"
+long_name = "Post Shutter Gate Valve"
+openval = 1
+closeval = 0
+shutter_type = "GV"
+
+[gv27]
+_target = "sst_base.sim.DummyObject"
+_group = "gatevalves"
+prefix = "XF:07IDB-VA:3{Slt:C-GV:1}"
+name= "gv27"
+long_name = "Upstream Gate Valve"
+openval = 1
+closeval = 0
+shutter_type = "GV"
+
+[gv28]
+_target = "sst_base.sim.DummyObject"
+_group = "gatevalves"
+prefix = "XF:07IDB-VA:2{BT:1-GV:1}"
+name = "gv28"
+long_name = "Downstream Gate Valve"
+openval = 1
+closeval = 0
+shutter_type = "GV"
+
+[mir4]
+_target = "sst_base.sim.DummyObject"
+_group = "mirrors"
+prefix = "XF:07ID2-OP{Mir:M4CD"
+name = "mir4"
+long_name = "SST 1 Mirror 4 fmb"
+
+[mir3]
+_target = "sst_base.sim.DummyObject"
+_group = "mirrors"
+prefix = "XF:07ID1-OP{Mir:M3ABC"
+name = "mir3"
+long_name = "SST 1 Mirror 3 fmb"
+
+[mir1]
+_target = "sst_base.sim.DummyObject"
+_group = "mirrors"
+prefix = "XF:07IDA-OP{Mir:M1"
+name = "mir1"
+long_name = "SST 1 Mirror 1 fmb"
+
+[Exit_Slit]
+_target = "sst_base.motors.PrettyMotor"
+_group = ["motors", "apertures"]
+_role = "slits"
+prefix = "SIM_SST:eslit:"
+name = "eslit"
+long_name = "Exit Slit of Mono Vertical Gap"
+
+
+[i0upAu]
+_target = "sst_base.motors.PrettyMotor"
+_group = "motors"
+prefix = "SIM_SST:i0upAu:"
+name = "i0upAu"
+
+[tesz]
+_target = "sst_base.motors.PrettyMotor"
+_group = "motors"
+prefix = "SIM_SST:tesz:"
+name = "tesz"
+
+[manipulator]
+_target = "nbs_bl.manipulators.ManipulatorBuilder"
+_group = "manipulators"
+_role = "primary_manipulator"
+prefix = "SIM_SST:manipulator:"
+name = "manip"
+
+[multimesh]
+_target = "nbs_bl.manipulators.MultiMeshBuilder"
+_group = "manipulators"
+prefix = "SIM_SST:multimesh:"
+name = "i0upmultimesh"
+long_name = "SST Reference Mesh Ladder"
+
+[psh1]
+_target = "sst_base.shutters.EPS_Shutter"
+_group = "shutters"	
+prefix = "SIM_SST:psh1:"
+name = "psh1"
+long_name = "Front-End Shutter"
+shutter_type = "FE"
+openval = 0
+closeval = 1
+
+[psh4]
+_target = "sst_base.shutters.EPS_Shutter"
+_group = "shutters"
+shutter_type = "PH"
+prefix = "SIM_SST:psh4:"
+name = "psh4"
+long_name = "Hutch Photon Shutter"
+openval = 0
+closeval = 1
+
+[psh10]
+_target = "sst_base.shutters.EPS_Shutter"
+_group = "shutters"
+shutter_type = "PH"
+prefix = "SIM_SST:psh10:"
+name = "psh10"
+long_name = "Upstream Photon Shutter"
+openval = 0
+closeval = 1
+
+[psh7]
+_target = "sst_base.shutters.EPS_Shutter"
+_group = "shutters"
+_role = "default_shutter"
+shutter_type = "PH"
+prefix = "SIM_SST:psh7:"
+name = "psh7"
+long_name = "Downstream Photon Shutter"
+openval = 0
+closeval = 1
+
+[ring_current]
+_target = "ophyd.EpicsSignalRO"
+_group = "signals"
+_role = "beam_current"
+prefix = "SIM_SST:current"
+name = "ring_current"
+long_name = "NSLS-II Ring Current"
+
+[ring_status]
+_target = "ophyd.EpicsSignalRO"
+_group = "signals"
+_role = "beam_status"
+prefix = "SIM_SST:status"
+name = "NSLS-II Status"
+
+[sst_control]
+_target = "ophyd.EpicsSignal"
+_group = "signals"
+prefix = "SIM_SST:Endstn-Sel"
+name = "Endstation in Control"
+string = true
+
+
+[manipx]
+_alias = "manipulator.x"
+_group = 'motors'
+
+[manipy]
+_alias = "manipulator.y"
+_group = 'motors'
+
+[manipz]
+_alias = "manipulator.z"
+_group = 'motors'
+
+[manipr]
+_alias = "manipulator.r"
+_group = 'motors'
+
+[samplex]
+_alias = "manipulator.sx"
+_group = 'motors'
+
+[sampley]
+_alias = "manipulator.sy"
+_group = 'motors'
+
+[samplez]
+_alias = "manipulator.sz"
+_group = 'motors'
+
+[sampler]
+_alias = "manipulator.sr"
+_group = 'motors'
+
+[energy]
+_alias = "en.energy"
+_group = 'motors'
+_role = "energy"
+
+[eslit]
+_alias = "Exit_Slit"

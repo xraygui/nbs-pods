@@ -1,0 +1,31 @@
+version: '3'
+
+networks:
+  bluesky-services_bluesky:
+    external: true
+
+services:
+  acq_qs:
+    image: sst:latest
+    volumes:
+      - ../../config/ipython:/usr/local/share/ipython
+      - ../../config/tiled/profiles:/etc/tiled/profiles
+      - ../../config/bluesky:/etc/bluesky
+      - ${HOME}/work/nsls-ii-sst:/usr/local/src/nsls-ii-sst
+      - ${HOME}/work/xraygui:/usr/local/src/xraygui
+    environment:
+      - IPYTHONDIR=/usr/local/share/ipython
+      - EPICS_CA_AUTO_ADDR_LIST=yes
+    command: >
+      bash -c "
+        pip3 install -e /usr/local/src/xraygui/nbs-core &&
+        pip3 install -e /usr/local/src/xraygui/nbs-bl &&
+        pip3 install -e /usr/local/src/nsls-ii-sst/sst_base &&
+        pip3 install -e /usr/local/src/nsls-ii-sst/sst_tes &&
+        pip3 install -e /usr/local/src/nsls-ii-sst/ucal &&
+        pip3 install -e /usr/local/src/nsls-ii-sst/ucal_sim &&
+        pip3 install -e /usr/local/src/xraygui/livetable &&
+        start-re-manager --kafka-topic=nbs.bluesky.runengine.documents --kafka-server=kafka:29092 --keep-re --redis-addr redis:6379 --zmq-publish-console ON --use-ipython-kernel ON --ipython-kernel-ip auto --startup-profile default
+      "
+    networks:
+      - bluesky-services_bluesky

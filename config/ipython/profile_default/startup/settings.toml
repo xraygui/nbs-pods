@@ -1,0 +1,3 @@
+modules = ['ucal.startup']
+beamline_prefix = "nbs"
+regions = ['regions.toml']

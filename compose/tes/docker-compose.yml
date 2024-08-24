@@ -1,0 +1,37 @@
+version: '3'
+
+networks:
+  bluesky-services_bluesky:
+    external: true
+services:
+  dastard:
+    image: dastard
+    volumes:
+      - /tmp/.dastard:/root/.dastard
+      - /tmp/data:/data
+
+  dcom:
+    image: dcom
+    volumes:
+      - /tmp/.X11-unix/:/tmp/.X11-unix/
+      - /tmp/.dastard:/root/.dastard
+      - /tmp/.docker.xauth:/tmp/.docker.xauth
+    environment:
+      - DISPLAY
+      - XAUTHORITY=/tmp/.docker.xauth
+      - XDG_RUNTIME_DIR=/tmp/runtime-${USER}
+    command: dcom
+
+  tes-server:
+    image: tes-server
+    volumes:
+      - ../../config/ipython:/usr/local/share/ipython
+      - /tmp/data:/data
+      - ${HOME}/work/nsls-ii-sst:/usr/local/src/nsls-ii-sst
+    command: >
+      bash -c "
+        pip3 install -e /usr/local/src/nsls-ii-sst/tes_scan_server &&
+        nsls_server /usr/local/share/ipython/profile_default/startup/tes_server.toml
+      "
+    networks:
+      - bluesky-services_bluesky
