@@ -8,13 +8,13 @@ services:
   nbs-sim:
     image: nbs_sim:latest
     volumes:
-      - ${HOME}/work/nsls-ii-sst:/usr/local/src/nsls-ii-sst
-      - ${HOME}/work/caproto:/usr/local/src/caproto
-      - ${HOME}/work/xraygui:/usr/local/src/xraygui
+      - ${NBSDIR}:/usr/local/src/xraygui
       - ../../config/ipython:/usr/local/share/ipython
     command: >
       bash -c "
-        bash /usr/local/bin/run_dev.sh &&
+        pip3 install -e /usr/local/src/xraygui/nbs-core &&
+        pip3 install -e /usr/local/src/xraygui/nbs-bl &&
+        pip3 install -e /usr/local/src/xraygui/nbs-sim &&
         nbs-sim --startup-dir /usr/local/share/ipython/profile_default/startup --list-pvs
       "
     networks:

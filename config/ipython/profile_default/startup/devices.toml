@@ -10,7 +10,7 @@ _group = "detectors"
 name = "tes"
 prefix = "SIM_SST:TES:"
 mcaPrefix = "SIM_SST:tesmca:"
-address = "localhost"
+address = "tes-server"
 path = "/data/raw"
 setFilenamePattern = false
 port = 4000
@@ -122,14 +122,14 @@ prefix = "SIM_SST:tesz:"
 name = "tesz"
 
 [manipulator]
-_target = "nbs_bl.manipulators.ManipulatorBuilder"
+_target = "sst_base.manipulator.ManipulatorBuilder"
 _group = "manipulators"
 _role = "primary_manipulator"
 prefix = "SIM_SST:manipulator:"
 name = "manip"
 
 [multimesh]
-_target = "nbs_bl.manipulators.MultiMeshBuilder"
+_target = "sst_base.manipulator.MultiMeshBuilder"
 _group = "manipulators"
 prefix = "SIM_SST:multimesh:"
 name = "i0upmultimesh"

@@ -2,8 +2,6 @@
 set -e
 set -o xtrace
 
-script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-
 version="0.0.1"
 container=$(buildah from conda-base)
 buildah run $container -- conda install -yc conda-forge pyepics
