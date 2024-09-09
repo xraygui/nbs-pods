@@ -1,0 +1,18 @@
+services:
+  acq_qs:
+    volumes:
+      - ${SSTDIR}:/usr/local/src/nsls-ii-sst
+      - ${NBSDIR}:/usr/local/src/xraygui
+      - ${HOME}/work/ophyd:/usr/local/src/ophyd
+    command: >
+      bash -c "
+        pip3 install -e /usr/local/src/ophyd &&
+        pip3 install -e /usr/local/src/xraygui/nbs-core &&
+        pip3 install -e /usr/local/src/xraygui/nbs-bl &&
+        pip3 install -e /usr/local/src/xraygui/livetable &&
+        pip3 install -e /usr/local/src/nsls-ii-sst/sst_base &&
+        pip3 install -e /usr/local/src/nsls-ii-sst/sst_tes &&
+        pip3 install -e /usr/local/src/nsls-ii-sst/ucal &&
+        pip3 install -e /usr/local/src/nsls-ii-sst/ucal_sim &&
+        start-re-manager --kafka-topic=nbs.bluesky.runengine.documents --kafka-server=kafka:29092 --keep-re --redis-addr redis:6379 --zmq-publish-console ON --use-ipython-kernel ON --ipython-kernel-ip auto --startup-profile default
+      "

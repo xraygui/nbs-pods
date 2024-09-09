@@ -9,6 +9,24 @@ services:
     volumes:
       - /tmp/.dastard:/root/.dastard
       - /tmp/data:/data
+    networks:
+      - bluesky-services_bluesky
+
+  bahama:
+    image: dastard
+    volumes:
+      - /tmp/.dastard:/root/.dastard
+      - /tmp/data:/data
+      - ${HOME}/work/dastard:/usr/local/src/dastard
+    command: >
+      bash -c "cd /usr/local/src/dastard/cmd/bahama && 
+        go run bahama.go --host dastard
+      "
+    networks:
+      - bluesky-services_bluesky
+    depends_on:
+      dastard:
+        condition: service_started
 
   dcom:
     image: dcom
@@ -27,6 +45,7 @@ services:
     volumes:
       - ../../config/ipython:/usr/local/share/ipython
       - /tmp/data:/data
+      - /tmp/.scan_server:/root/.scan_server
       - ${HOME}/work/nsls-ii-sst:/usr/local/src/nsls-ii-sst
     command: >
       bash -c "

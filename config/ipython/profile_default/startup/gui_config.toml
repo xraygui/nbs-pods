@@ -1,5 +1,5 @@
 [gui.tabs]
-include = ["nbs-gui-queue", "kafka-table-tab", "nbs-gui-console", "nbs-gui-monitor", "nbs-gui-motors", "nbs-gui-plans", "nbs-gui-samples"]
+include = ["nbs-gui-queue", "kafka-table-tab", "nbs-gui-console", "nbs-gui-monitor", "nbs-gui-motors", "nbs-gui-plans", "ucal-gui-samples", "ucal-tes-tab"]
 
 [models.beamline]
 primary_energy = "en"
@@ -11,6 +11,7 @@ psh1 = { visible = false }
 psh4 = { visible = false }
 Exit_Slit = { label = "Exit Slit" }
 en = {"_role" = "energy"}
+tes = { "_group" = "misc" }
 
 [loaders]
 "NewEnPos" = "ucal.qt.models.energy.EnergyModel"
@@ -26,6 +27,7 @@ en = {"_role" = "energy"}
 "PrettyMotor" = "nbs_gui.models.MotorModel"
 "StandardProsilicaV33" = "nbs_gui.models.PVModel"
 "MultiMeshBuilder" = "nbs_gui.models.ManipulatorModel"
+"TESMCAFactory" = "ucal.qt.models.tesModel.TESModel"
 
 [kafka]
 config_file = "/etc/bluesky/kafka.yml"

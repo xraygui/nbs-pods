@@ -50,8 +50,8 @@ start_all_services() {
 }
 
 stop_all_services() {
-    for service in "${SERVICES[@]}"; do
-        stop_service "$service"
+    for ((i=${#SERVICES[@]}-1; i>=0; i--)); do
+        stop_service "${SERVICES[i]}"
     done
 }
 

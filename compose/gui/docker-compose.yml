@@ -4,14 +4,17 @@ networks:
     external: true
 services:
   qs-gui:
-    image: nbs_gui_dev:latest
+    image: nbs_gui:latest
     volumes:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
       - /tmp/.docker.xauth:/tmp/.docker.xauth
       - ../../config/bluesky:/etc/bluesky
       - ../../config/ipython:/usr/local/share/ipython
+      - ../../config/tiled:/etc/tiled
       - ${HOME}/work/nsls-ii-sst:/usr/local/src/nsls-ii-sst
       - ${HOME}/work/xraygui:/usr/local/src/xraygui
+      - ${HOME}/work/ophyd:/usr/local/src/ophyd
+
     environment:
       - DISPLAY
       - IPYTHONDIR=/usr/local/share/ipython
@@ -22,8 +25,10 @@ services:
       - QSERVER_ZMQ_CONTROL_ADDRESS=tcp://acq_qs:60615
     command: >
       bash -c "
+        pip3 install -e /usr/local/src/ophyd &&
         pip3 install -e /usr/local/src/xraygui/livetable &&
         pip3 install -e /usr/local/src/xraygui/nbs-core &&
+        pip3 install -e /usr/local/src/xraygui/nbs-bl &&
         pip3 install -e /usr/local/src/xraygui/nbs-gui &&
         pip3 install -e /usr/local/src/nsls-ii-sst/sst_base &&
         pip3 install -e /usr/local/src/nsls-ii-sst/sst_tes &&

@@ -58,7 +58,7 @@ services:
 
   tiled_server:
     image: ghcr.io/bluesky/databroker:latest
-    command: tiled serve config /etc/tiled/config
+    command: tiled serve config /etc/tiled/config --host 0.0.0.0
     volumes:
       - ../../config/tiled/config:/etc/tiled/config
     ports:

@@ -1,11 +1,7 @@
 trees:
-  - tree: databroker.mongo_normalized:MongoAdapter.from_uri
+  - tree: databroker.mongo_normalized:Tree.from_uri
     path: /
     args:
       uri: mongodb://mongo:27017/nbs-bluesky-documents?authSource=admin
-uvicorn:
-  host: 0.0.0.0
-  port: 8000
-  root_path: /tiled
 authentication:
   allow_anonymous_access: true
