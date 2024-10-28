@@ -25,7 +25,7 @@ name = "ucal_i0up"
 [i1]
 _target = "sst_base.detectors.scalar.ADCBuffer"
 _group = "detectors"
-_role = "indirect_alignment"
+_role = "indirect_alignment`"
 prefix = "SIM_SST:i1:"
 name = "ucal_i1"
 
@@ -43,8 +43,9 @@ name = "ucal_sc"
 long_name = "Sample Drain Current"
 
 [en]
-_target = "ucal_sim.energy.NewEnPos"
+_target = "ucal_sim.energy.EnPosFactory"
 _group = "source"
+_load_order = 2
 prefix = "SIM_SST:energy:"
 long_name = "SST Energy"
 name = "en"
@@ -129,7 +130,7 @@ prefix = "SIM_SST:manipulator:"
 name = "manip"
 
 [multimesh]
-_target = "sst_base.manipulator.MultiMeshBuilder"
+_target = "ucal.multimesh.MultiMeshBuilder"
 _group = "manipulators"
 _role = "reference_sampleholder"
 prefix = "SIM_SST:multimesh:"
@@ -235,7 +236,14 @@ _group = 'motors'
 [energy]
 _alias = "en.energy"
 _group = 'motors'
+_load_order = 2
 _role = "energy"
+
+[polarization]
+_alias = "en.polarization"
+_group = 'motors'
+_load_order = 2
+_role = "polarization"
 
 [eslit]
 _alias = "Exit_Slit"

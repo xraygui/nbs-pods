@@ -8,7 +8,7 @@ services:
   nbs-sim:
     image: nbs_sim:latest
     volumes:
-      - ${NBSDIR}:/usr/local/src/xraygui
+      - ${HOME}/work/xraygui:/usr/local/src/xraygui
       - ../../config/ipython:/usr/local/share/ipython
     command: >
       bash -c "

@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  dastard:
+    volumes:
+      - ${HOME}/work/dastard:/usr/local/src/dastard
+    command: >
+      bash -c "
+        tail -f /dev/null
+        cd /usr/local/src/dastard &&
+        make &&
+        make install &&
+        dastard
+      "

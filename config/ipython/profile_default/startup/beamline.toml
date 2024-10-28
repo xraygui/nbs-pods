@@ -1,5 +1,9 @@
 [configuration]
 baseline = ['motors', 'shutters', 'mirrors', 'manipulators', 'apertures']
+has_slits = true
+has_motorized_samples = true
+has_motorized_eref = true
+has_polarization = true
 
 [detector_sets.default]
 primary = "sc"
@@ -12,6 +16,10 @@ i1 = { threshold = 0.1, description = "Back Diode"}
 sc = { threshold = 0.1 }
 ref = { threshold = 0.1 }
 
-[startup]
+[settings]
 modules = ['ucal.startup']
 regions = ['regions.toml']
+
+[settings.redis]
+host = "redis"
+prefix = "nexafs-"

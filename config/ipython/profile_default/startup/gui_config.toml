@@ -1,5 +1,11 @@
+[gui]
+header = "ucal-header-widget"
+
 [gui.tabs]
-include = ["nbs-gui-queue", "kafka-table-tab", "nbs-gui-console", "nbs-gui-monitor", "nbs-gui-motors", "nbs-gui-plans", "ucal-gui-samples", "ucal-tes-tab"]
+include = ["nbs-gui-queue", "kafka-table-tab", "nbs-gui-console", "nbs-gui-monitor", "nbs-gui-motors", "ucal-gui-samples", "ucal-tes-tab"]
+
+[gui.plans]
+include = ["nbs-gui-scan", "nbs-gui-move", "nbs-gui-xas", "nbs-gui-timescan", "nbs-gui-varscan", "nbs-gui-flyscan", "ucal-tes-cal", "manual-sample-move"]
 
 [models.beamline]
 primary_energy = "en"
@@ -7,14 +13,14 @@ primary_manipulator = "manipulator"
 loader = "nbs_bl.qt.models.beamline.SSTBeamlineModel"
 
 [devices]
-psh1 = { visible = false }
+psh1 = { visible = false, view_only = true }
 psh4 = { visible = false }
 Exit_Slit = { label = "Exit Slit" }
-en = {"_role" = "energy"}
+en = {"_role" = "energy", "load_order" = 1}
 tes = { "_group" = "misc" }
 
 [loaders]
-"NewEnPos" = "ucal.qt.models.energy.EnergyModel"
+"EnPosFactory" = "ucal.qt.models.energy.EnergyModel"
 "I400SingleCh" = "nbs_gui.models.ScalarModel"
 "PrettyMotorFMBO" = "nbs_gui.models.MotorModel"
 "FMBHexapodMirror" = "nbs_gui.models.ManipulatorModel"
