@@ -56,6 +56,12 @@ services:
     networks:
       - bluesky
 
+  redisInfo:
+    image: docker.io/redis
+    command: redis-server --port 60737
+    networks:
+      - bluesky
+
   tiled_server:
     image: ghcr.io/bluesky/databroker:latest
     command: tiled serve config /etc/tiled/config --host 0.0.0.0

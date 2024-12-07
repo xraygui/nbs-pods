@@ -33,7 +33,7 @@ start_service() {
 stop_service() {
     local service=$1
     echo "Stopping $service..."
-    podman-compose -f "$BASE_DIR/compose/$service/docker-compose.yml" down
+    podman-compose -f "$BASE_DIR/compose/$service/docker-compose.yml" down -v
 }
 
 build_image() {

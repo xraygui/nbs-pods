@@ -18,8 +18,17 @@ ref = { threshold = 0.1 }
 
 [settings]
 modules = ['ucal.startup']
-regions = ['regions.toml']
+tes_processing = "/usr/local/share/ipython/profile_default/startup"
 
-[settings.redis]
+[settings.plans]
+xas = ['regions.toml']
+
+[settings.redis.md]
 host = "redis"
 prefix = "nexafs-"
+
+[settings.redis.info]
+host = "redisInfo"
+prefix = "nexafs-"
+port = 60737
+db = 4

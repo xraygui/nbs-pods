@@ -5,7 +5,17 @@ header = "ucal-header-widget"
 include = ["nbs-gui-queue", "kafka-table-tab", "nbs-gui-console", "nbs-gui-monitor", "nbs-gui-motors", "ucal-gui-samples", "ucal-tes-tab"]
 
 [gui.plans]
-include = ["nbs-gui-scan", "nbs-gui-move", "nbs-gui-xas", "nbs-gui-timescan", "nbs-gui-varscan", "nbs-gui-flyscan", "ucal-tes-cal", "manual-sample-move"]
+include = [
+    "nbs-gui-scan",
+    "nbs-gui-move", 
+    "nbs-gui-xas",
+    "nbs-gui-timescan",
+    "nbs-gui-varscan",
+    "nbs-gui-flyscan",
+    "ucal-tes-cal",
+    "ucal-tes-setup",
+    "manual-sample-move"
+]
 
 [models.beamline]
 primary_energy = "en"

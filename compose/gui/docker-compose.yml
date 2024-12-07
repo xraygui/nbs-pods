@@ -26,7 +26,7 @@ services:
     command: >
       bash -c "
         pip3 install --no-deps --no-build-isolation -e /usr/local/src/ophyd &&
-        pip3 install --no-deps --no-build-isolation -e /usr/local/src/xraygui/livetable &&
+        pip3 install --no-deps --no-build-isolation -e /usr/local/src/nsls-ii-sst/bluesky-widgets &&
         pip3 install --no-deps --no-build-isolation -e /usr/local/src/xraygui/nbs-core &&
         pip3 install --no-deps --no-build-isolation -e /usr/local/src/xraygui/nbs-bl &&
         pip3 install --no-deps --no-build-isolation -e /usr/local/src/xraygui/nbs-gui &&
