@@ -6,18 +6,19 @@ services:
   qs-gui:
     image: nbs_gui:latest
     volumes:
-      - /run/user/1001/${WAYLAND_DISPLAY}:/tmp/${WAYLAND_DISPLAY}
+      - /tmp/.X11-unix/:/tmp/.X11-unix/
+      - /tmp/.docker.xauth:/tmp/.docker.xauth
       - ../../config/bluesky:/etc/bluesky
       - ../../config/ipython:/usr/local/share/ipython
       - ../../config/tiled:/etc/tiled
       - ${HOME}/work/nsls-ii-sst:/usr/local/src/nsls-ii-sst
       - ${HOME}/work/xraygui:/usr/local/src/xraygui
       - ${HOME}/work/ophyd:/usr/local/src/ophyd
-
     environment:
-      - WAYLAND_DISPLAY=${WAYLAND_DISPLAY}
+      - DISPLAY
       - IPYTHONDIR=/usr/local/share/ipython
-      - XDG_RUNTIME_DIR=/tmp
+      - XAUTHORITY=/tmp/.docker.xauth
+      - XDG_RUNTIME_DIR=/tmp/runtime-${USER}
       - EPICS_CA_AUTO_ADDR_LIST=YES
       - QSERVER_ZMQ_INFO_ADDRESS=tcp://acq_qs:60625
       - QSERVER_ZMQ_CONTROL_ADDRESS=tcp://acq_qs:60615

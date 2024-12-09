@@ -13,7 +13,7 @@ volumes:
 
 services:
   mongo:
-    image: mongo:latest
+    image: docker.io/mongo:latest
     networks:
       - bluesky
 
