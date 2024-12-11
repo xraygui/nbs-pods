@@ -12,19 +12,30 @@ BEAMLINE_NAME="$1"
 REPO_NAME="${BEAMLINE_NAME}-pods"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BASE_DIR="$(dirname "$SCRIPT_DIR")"
+PARENT_DIR="$(dirname "$BASE_DIR")"
+TARGET_DIR="$PARENT_DIR/$REPO_NAME"
 
-if [ -d "$REPO_NAME" ]; then
-    echo "Error: Directory $REPO_NAME already exists"
+echo -e "\nWill create $REPO_NAME in:"
+echo "$TARGET_DIR"
+read -p "Is this correct? [Y/n] " response
+
+if [[ "$response" =~ ^[Nn] ]]; then
+    echo "Aborting."
+    exit 1
+fi
+
+if [ -d "$TARGET_DIR" ]; then
+    echo "Error: Directory $TARGET_DIR already exists"
     exit 1
 fi
 
 echo "Creating $REPO_NAME repository..."
 
 # Create the basic directory structure
-mkdir -p "$REPO_NAME"/{compose/,config/ipython/profile_default/startup,scripts,examples}
+mkdir -p "$TARGET_DIR"/{compose/,config/ipython/profile_default/startup,scripts,examples,images}
 
 # Create a basic deploy.sh script
-cat > "$REPO_NAME/scripts/deploy.sh" << 'EOF'
+cat > "$TARGET_DIR/scripts/deploy.sh" << 'EOF'
 #!/bin/bash
 
 set -e
@@ -53,8 +64,7 @@ fi
 
 # Combine all services
 ALL_SERVICES=(
-    "${CORE_SERVICES[@]}"
-    "${TEMPLATE_SERVICES[@]}"
+    "${BASE_SERVICES[@]}"
     "${BEAMLINE_SERVICES[@]}"
 )
 
@@ -109,10 +119,10 @@ echo "$BEAMLINE_NAME-pods operation completed successfully."
 EOF
 
 # Make deploy.sh executable
-chmod +x "$REPO_NAME/scripts/deploy.sh"
+chmod +x "$TARGET_DIR/scripts/deploy.sh"
 
 # Create a basic docker-compose override template
-cat > "$REPO_NAME/examples/docker-compose.override.yml" << 'EOF'
+cat > "$TARGET_DIR/examples/docker-compose.override.yml" << 'EOF'
 # Override file for customizing core services
 version: '3'
 
@@ -134,7 +144,7 @@ services:
 EOF
 
 # Create a basic beamline.toml template
-cat > "$REPO_NAME/config/ipython/profile_default/startup/beamline.toml" << 'EOF'
+cat > "$TARGET_DIR/config/ipython/profile_default/startup/beamline.toml" << 'EOF'
 [configuration]
 baseline = []
 has_slits = false
@@ -166,7 +176,7 @@ db = 4
 EOF
 
 # Create a basic devices.toml template
-cat > "$REPO_NAME/config/ipython/profile_default/startup/devices.toml" << 'EOF'
+cat > "$TARGET_DIR/config/ipython/profile_default/startup/devices.toml" << 'EOF'
 # Define your beamline-specific devices here
 [motors]
 
@@ -176,7 +186,7 @@ cat > "$REPO_NAME/config/ipython/profile_default/startup/devices.toml" << 'EOF'
 EOF
 
 # Create a basic README
-cat > "$REPO_NAME/README.md" << EOF
+cat > "$TARGET_DIR/README.md" << EOF
 # $REPO_NAME
 
 This repository contains the beamline-specific configuration and services for the $BEAMLINE_NAME beamline.
@@ -190,19 +200,69 @@ It is designed to work with the nbs-pods framework.
 ## Directory Structure
 
 - \`compose/\`: Contains beamline-specific services and overrides
+  - \`<service>/\`: Each service has its own directory with docker-compose files
+    - \`docker-compose.yml\`: Main service definition
+    - \`docker-compose.override.yml\`: Optional overrides (always applied)
+    - \`docker-compose.development.yml\`: Development settings (applied with --dev)
 - \`config/\`: Contains beamline-specific configuration
 - \`scripts/\`: Contains deployment and utility scripts
+  - \`deploy.sh\`: Main deployment script
+  - \`services.sh\`: Defines beamline-specific services
+
+## Service Management
+
+The \`services.sh\` file is used to declare which services are specific to your beamline. 
+This file is sourced by \`deploy.sh\` and should define a \`BEAMLINE_SERVICES\` array.
+Each service listed in this array should have a corresponding directory in \`compose/<service>/\`.
+
+For example, if your beamline has a custom detector service:
+\`\`\`bash
+# scripts/services.sh
+BEAMLINE_SERVICES=(
+    "custom-detector"    # Uses compose/custom-detector/
+)
+\`\`\`
+
+### Service Configuration Files
+
+Each service can have up to three configuration files:
+
+1. \`docker-compose.yml\`: Base configuration
+   - Required for all services
+   - Contains the core service definition
+
+2. \`docker-compose.override.yml\`: Standard overrides
+   - Optional
+   - Always applied if present
+   - Use for permanent customizations
+
+3. \`docker-compose.development.yml\`: Development settings
+   - Optional
+   - Only applied when using \`--dev\` flag
+   - Use for development-specific settings (volumes, ports, etc.)
+
+For example, to override a base service from nbs-pods:
+
+\`\`\`
+compose/
+└── bsui/
+    ├── docker-compose.yml          # Base configuration
+    ├── docker-compose.override.yml # Always applied
+    └── docker-compose.development.yml # Applied with --dev flag
+\`\`\`
 
 ## Usage
 
 To start all services:
 \`\`\`bash
-./scripts/deploy.sh start
+./scripts/deploy.sh start           # Normal mode
+./scripts/deploy.sh start --dev     # Development mode
 \`\`\`
 
 To start specific services:
 \`\`\`bash
 ./scripts/deploy.sh start service1 service2
+./scripts/deploy.sh start --dev service1 service2
 \`\`\`
 
 To stop all services:
@@ -215,18 +275,93 @@ To stop all services:
 1. Edit \`config/ipython/profile_default/startup/beamline.toml\` to configure beamline settings
 2. Edit \`config/ipython/profile_default/startup/devices.toml\` to configure devices
 3. Add beamline-specific services in \`compose/<service>/\`
-4. Customize core service settings in \`compose/<service>/docker-compose.override.yml\`
+4. Define beamline services in \`scripts/services.sh\`
 EOF
 
 echo "Created $REPO_NAME repository with the following structure:"
 if command -v tree >/dev/null 2>&1; then
-    tree "$REPO_NAME"
+    tree "$TARGET_DIR"
 else
-    ls -R "$REPO_NAME"
+    ls -R "$TARGET_DIR"
 fi
 
-echo -e "\nNext steps:"
+echo "Initializing git repository..."
+cd "$TARGET_DIR"
+
+# Initialize git repository
+git init
+
+# Add initial files
+git add scripts/deploy.sh \
+    config/ipython/profile_default/startup/beamline.toml \
+    config/ipython/profile_default/startup/devices.toml \
+    README.md
+
+# Create .gitignore
+cat > .gitignore << 'EOF'
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+
+# Environment
+.env
+.venv/
+env/
+venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# QueueServer
+config/ipython/profile_default/history.sqlite
+config/ipython/profile_default/startup/existing_plans_and_devices.yaml
+EOF
+
+# Add .gitignore
+git add .gitignore
+
+# Initial commit
+git commit -m "Initial commit for $REPO_NAME
+
+Created with create-beamline-pods.sh script.
+Includes:
+- Basic directory structure
+- Deploy script
+- Configuration templates
+- README"
+
+echo -e "\nGit repository initialized with initial commit."
+echo "Next steps:"
 echo "1. Edit $REPO_NAME/config/ipython/profile_default/startup/beamline.toml"
 echo "2. Edit $REPO_NAME/config/ipython/profile_default/startup/devices.toml"
 echo "3. Add your beamline-specific services in $REPO_NAME/compose/"
 echo "4. Customize core services in $REPO_NAME/compose/<service>/docker-compose.override.yml"
+echo "5. Push to a remote repository if desired"
+
+# Create a basic services.sh template
+cat > "$REPO_NAME/scripts/services.sh" << 'EOF'
+#!/bin/bash
+
+# The services.sh file declares which services are specific to your beamline.
+# This file is sourced by deploy.sh and defines the BEAMLINE_SERVICES array.
+# Each service listed here should have a corresponding directory in compose/<service>/.
+
+# Define beamline-specific services
+BEAMLINE_SERVICES=(
+    # Add your beamline-specific services here
+    # Example: "custom-detector"    # Uses compose/custom-detector/
+)
+EOF
+
+chmod +x "$REPO_NAME/scripts/services.sh"

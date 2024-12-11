@@ -41,10 +41,40 @@ get_compose_file() {
     echo "$compose_file"
 }
 
+# Function to get the override file path for a service
+get_compose_override() {
+    local service=$1
+    local override_file=""
+    
+    # Check for beamline override first
+    if [ -f "$BEAMLINE_PODS_DIR/compose/$service/docker-compose.override.yml" ]; then
+        override_file="$BEAMLINE_PODS_DIR/compose/$service/docker-compose.override.yml"
+    # Then check for base override
+    elif [ -f "$NBS_PODS_DIR/compose/$service/docker-compose.override.yml" ]; then
+        override_file="$NBS_PODS_DIR/compose/$service/docker-compose.override.yml"
+    fi
+    echo "$override_file"
+}
+
+# Function to get the development file path for a service
+get_compose_development() {
+    local service=$1
+    local dev_file=""
+    
+    # Check for beamline development file first
+    if [ -f "$BEAMLINE_PODS_DIR/compose/$service/docker-compose.development.yml" ]; then
+        dev_file="$BEAMLINE_PODS_DIR/compose/$service/docker-compose.development.yml"
+    # Then check for base development file
+    elif [ -f "$NBS_PODS_DIR/compose/$service/docker-compose.development.yml" ]; then
+        dev_file="$NBS_PODS_DIR/compose/$service/docker-compose.development.yml"
+    fi
+    echo "$dev_file"
+}
+
 start_service() {
     local service=$1
     local dev_mode=$2
-    echo "Starting $service..."
+    echo "Starting $service$([ "$dev_mode" = true ] && echo " (dev mode)")..."
     
     local compose_file=$(get_compose_file "$service")
     if [ -z "$compose_file" ]; then
@@ -52,12 +82,25 @@ start_service() {
         return 1
     fi
     
-    # Set up compose override chain
+    # Set up compose file chain
     local compose_files=("$compose_file")
+    echo "  Using compose files:"
+    echo "    - $compose_file (base)"
     
-    # Add dev override if in dev mode
-    if [ "$dev_mode" = true ] && [ -f "${compose_file%/*}/docker-compose.override.yml" ]; then
-        compose_files+=("${compose_file%/*}/docker-compose.override.yml")
+    # Always add override if it exists
+    local override_file=$(get_compose_override "$service")
+    if [ -n "$override_file" ]; then
+        compose_files+=("$override_file")
+        echo "    - $override_file (override)"
+    fi
+    
+    # Add development file if in dev mode
+    if [ "$dev_mode" = true ]; then
+        local dev_file=$(get_compose_development "$service")
+        if [ -n "$dev_file" ]; then
+            compose_files+=("$dev_file")
+            echo "    - $dev_file (development)"
+        fi
     fi
     
     # Build the COMPOSE_FILE string
@@ -82,20 +125,14 @@ stop_service() {
         return 1
     fi
     
-    COMPOSE_FILE="$compose_file" podman-compose down -v
-}
-
-start_all_services() {
-    local dev_mode=$1
-    for service in "${ALL_SERVICES[@]}"; do
-        start_service "$service" "$dev_mode"
-    done
-}
-
-stop_all_services() {
-    for ((i=${#ALL_SERVICES[@]}-1; i>=0; i--)); do
-        stop_service "${ALL_SERVICES[i]}"
-    done
+    # Include override file if it exists
+    local override_file=$(get_compose_override "$service")
+    local compose_string="$compose_file"
+    if [ -n "$override_file" ]; then
+        compose_string="$compose_string:$override_file"
+    fi
+    
+    COMPOSE_FILE="$compose_string" podman-compose down -v
 }
 
 print_usage() {

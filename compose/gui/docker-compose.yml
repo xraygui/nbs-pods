@@ -16,6 +16,7 @@ services:
 
     environment:
       - WAYLAND_DISPLAY=${WAYLAND_DISPLAY}
+      - QT_QPA_PLATFORM=wayland
       - IPYTHONDIR=/usr/local/share/ipython
       - XDG_RUNTIME_DIR=/tmp
       - EPICS_CA_AUTO_ADDR_LIST=YES

@@ -11,10 +11,11 @@ export BEAMLINE_NAME="demo"
 # Source the library functions
 source "$NBS_PODS_DIR/scripts/nbs-pods-lib.sh"
 
-# Define demo beamline services
-BEAMLINE_SERVICES=(
-    "sim"  # Simulation service for demo
-)
+if [ -f "$BEAMLINE_PODS_DIR/scripts/services.sh" ]; then
+    source "$BEAMLINE_PODS_DIR/scripts/services.sh"
+else
+    BEAMLINE_SERVICES=()
+fi
 
 # Combine all services
 ALL_SERVICES=(
@@ -23,13 +24,54 @@ ALL_SERVICES=(
 )
 
 usage() {
-    echo "Usage: $0 [start [--dev]|stop] [service1 service2 ...]"
-    echo "If no services are specified, all will be managed."
+    echo "Usage: $0 [start|stop] [service1 service2 ... [--dev service3 service4 ...]]"
+    echo ""
+    echo "Examples:"
+    echo "  $0 start                                    # Start all services normally"
+    echo "  $0 start service1 service2                  # Start specific services normally"
+    echo "  $0 start service1 --dev service2            # Start service1 normally, service2 in dev mode"
+    echo "  $0 start --dev service1                     # Start service1 in dev mode"
+    echo "  $0 stop                                     # Stop all services"
     echo ""
     print_usage
-    echo ""
-    echo "Note: For image building, use ./scripts/build-images.sh"
     exit 1
+}
+
+start_services() {
+    local dev_mode=false
+    local services=()
+    
+    # Process arguments
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --dev)
+                dev_mode=true
+                shift
+                ;;
+            *)
+                # Start service with current dev_mode setting
+                if [ -z "$1" ]; then
+                    break
+                fi
+                start_service "$1" "$dev_mode"
+                shift
+                ;;
+        esac
+    done
+}
+
+stop_services() {
+    if [ $# -eq 0 ]; then
+        # Stop all services in reverse order
+        for ((i=${#ALL_SERVICES[@]}-1; i>=0; i--)); do
+            stop_service "${ALL_SERVICES[i]}"
+        done
+    else
+        # Stop specific services
+        for service in "$@"; do
+            stop_service "$service"
+        done
+    fi
 }
 
 # Main execution
@@ -37,27 +79,17 @@ if [ $# -eq 0 ]; then
     usage
 elif [ "$1" = "start" ]; then
     shift
-    dev_mode=false
-    if [ "$1" = "--dev" ]; then
-        dev_mode=true
-        shift
-    fi
     if [ $# -eq 0 ]; then
-        start_all_services "$dev_mode"
-    else
-        for service in "$@"; do
-            start_service "$service" "$dev_mode"
+        # Start all services normally
+        for service in "${ALL_SERVICES[@]}"; do
+            start_service "$service" false
         done
+    else
+        start_services "$@"
     fi
 elif [ "$1" = "stop" ]; then
     shift
-    if [ $# -eq 0 ]; then
-        stop_all_services
-    else
-        for service in "$@"; do
-            stop_service "$service"
-        done
-    fi
+    stop_services "$@"
 else
     usage
 fi 
