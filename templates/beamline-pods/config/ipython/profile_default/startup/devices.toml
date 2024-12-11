@@ -1,0 +1,6 @@
+# Define your beamline-specific devices here
+[motors]
+
+[detectors]
+
+[shutters] 
