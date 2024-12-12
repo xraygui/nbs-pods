@@ -66,7 +66,7 @@ services:
     image: ghcr.io/bluesky/databroker:latest
     command: tiled serve config /etc/tiled/config --host 0.0.0.0
     volumes:
-      - ../../config/tiled/config:/etc/tiled/config
+      - ${NBS_PODS_DIR}/config/tiled/config:/etc/tiled/config
     ports:
       - "8000:8000"
     networks:

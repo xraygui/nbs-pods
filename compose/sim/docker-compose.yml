@@ -8,8 +8,7 @@ services:
   nbs-sim:
     image: nbs_sim:latest
     volumes:
-      # - ${HOME}/work/xraygui:/usr/local/src/xraygui
-      - ../../config/ipython:/usr/local/share/ipython
+      - ${BEAMLINE_PODS_DIR}/config/ipython:/usr/local/share/ipython
     command: nbs-sim --startup-dir /usr/local/share/ipython/profile_default/startup --list-pvs
     networks:
       - bluesky-services_bluesky

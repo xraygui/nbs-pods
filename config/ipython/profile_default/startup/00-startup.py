@@ -22,5 +22,5 @@ move = mv
 RE(psh10.open())
 RE(psh7.open())
 manipz.velocity.set(100)
-RE(mv(manipz, 464))
+RE(mv(manipz, 364))
 manipz.velocity.set(1)

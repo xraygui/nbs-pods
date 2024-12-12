@@ -7,11 +7,11 @@ networks:
 services:
   acq_qs:
     image: nbs
-    build: ../../images/nbs
+    build: ${NBS_PODS_DIR}/images/nbs
     volumes:
-      - ../../config/ipython:/usr/local/share/ipython
-      - ../../config/tiled/profiles:/etc/tiled/profiles
-      - ../../config/bluesky:/etc/bluesky
+      - ${BEAMLINE_PODS_DIR}/config/ipython:/usr/local/share/ipython
+      - ${NBS_PODS_DIR}/config/tiled/profiles:/etc/tiled/profiles
+      - ${NBS_PODS_DIR}/config/bluesky:/etc/bluesky
     environment:
       - IPYTHONDIR=/usr/local/share/ipython
       - EPICS_CA_AUTO_ADDR_LIST=yes

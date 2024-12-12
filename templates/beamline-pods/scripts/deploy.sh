@@ -8,6 +8,9 @@ export BEAMLINE_PODS_DIR="$(dirname "$SCRIPT_DIR")"
 export NBS_PODS_DIR="$(dirname "$BEAMLINE_PODS_DIR")/nbs-pods"
 export BEAMLINE_NAME="$(basename "$BEAMLINE_PODS_DIR" | sed 's/-pods$//')"
 
+# Export host user ID for container permissions
+export HOST_UID=$(id -u)
+
 if [ ! -d "$NBS_PODS_DIR" ]; then
     echo "Error: nbs-pods directory not found at $NBS_PODS_DIR"
     echo "Please ensure nbs-pods is cloned in the same parent directory as this repository"

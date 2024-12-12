@@ -1,8 +1,8 @@
 [gui]
-header = "ucal-header-widget"
+header = "nbs-gui-header"
 
 [gui.tabs]
-include = ["nbs-gui-queue", "kafka-table-tab", "nbs-gui-console", "nbs-gui-monitor", "nbs-gui-motors", "ucal-gui-samples", "ucal-tes-tab"]
+include = ["nbs-gui-queue", "kafka-table-tab", "nbs-gui-console", "nbs-gui-monitor"]
 
 [gui.plans]
 include = [
@@ -12,8 +12,6 @@ include = [
     "nbs-gui-timescan",
     "nbs-gui-varscan",
     "nbs-gui-flyscan",
-    "ucal-tes-cal",
-    "ucal-tes-setup",
     "manual-sample-move"
 ]
 
@@ -25,12 +23,10 @@ loader = "nbs_bl.qt.models.beamline.SSTBeamlineModel"
 [devices]
 psh1 = { visible = false, view_only = true }
 psh4 = { visible = false }
-Exit_Slit = { label = "Exit Slit" }
 en = {"_role" = "energy", "load_order" = 1}
-tes = { "_group" = "misc" }
 
 [loaders]
-"EnPosFactory" = "ucal.qt.models.energy.EnergyModel"
+"EnPosFactory" = "nbs_bl.qt.models.energy.EnergyModel"
 "I400SingleCh" = "nbs_gui.models.ScalarModel"
 "PrettyMotorFMBO" = "nbs_gui.models.MotorModel"
 "FMBHexapodMirror" = "nbs_gui.models.ManipulatorModel"
@@ -39,11 +35,9 @@ tes = { "_group" = "misc" }
 "ShutterSet" = "nbs_gui.models.GVModel"
 "EPS_Shutter" = "nbs_gui.models.GVModel"
 "ManipulatorBuilder" = "nbs_gui.models.ManipulatorModel"
-"ADCBuffer" = "nbs_gui.models.ScalarModel"
-"PrettyMotor" = "nbs_gui.models.MotorModel"
-"StandardProsilicaV33" = "nbs_gui.models.PVModel"
+"ophScalar" = "nbs_gui.models.ScalarModel"
+"EpicsMotor" = "nbs_gui.models.MotorModel"
 "MultiMeshBuilder" = "nbs_gui.models.ManipulatorModel"
-"TESMCAFactory" = "ucal.qt.models.tesModel.TESModel"
 
 [kafka]
 config_file = "/etc/bluesky/kafka.yml"

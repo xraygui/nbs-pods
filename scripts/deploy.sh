@@ -8,6 +8,8 @@ export NBS_PODS_DIR="$(dirname "$SCRIPT_DIR")"
 export BEAMLINE_PODS_DIR="$NBS_PODS_DIR"  # For demo, nbs-pods is its own beamline
 export BEAMLINE_NAME="demo"
 
+export HOST_UID=$(id -u)
+
 # Source the library functions
 source "$NBS_PODS_DIR/scripts/nbs-pods-lib.sh"
 
