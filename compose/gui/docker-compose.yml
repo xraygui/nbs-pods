@@ -7,8 +7,8 @@ services:
     image: nbs_gui:latest
     volumes:
       - /run/user/${HOST_UID}/${WAYLAND_DISPLAY}:/tmp/${WAYLAND_DISPLAY}
-      - ${BEAMLINE_PODS_DIR}/config/bluesky:/etc/bluesky
-      - ${NBS_PODS_DIR}/config/ipython:/usr/local/share/ipython
+      - ${NBS_PODS_DIR}/config/bluesky:/etc/bluesky
+      - ${BEAMLINE_PODS_DIR}/config/ipython:/usr/local/share/ipython
       - ${NBS_PODS_DIR}/config/tiled:/etc/tiled
 
     environment:

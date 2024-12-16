@@ -1,0 +1,11 @@
+services:
+  nbs-sim:
+    volumes:
+      - ${NBSDIR}:/usr/local/src/xraygui
+      - ${HOME}/work/caproto:/usr/local/src/caproto
+    command: >
+      bash -c "
+        pip3 install --no-deps --no-build-isolation /usr/local/src/caproto &&
+        pip3 install --no-deps --no-build-isolation -e /usr/local/src/xraygui/nbs-sim/src &&
+        nbs-sim --startup-dir /usr/local/share/ipython/profile_default/startup --list-pvs
+      "
