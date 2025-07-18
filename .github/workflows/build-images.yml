@@ -2,7 +2,7 @@ name: Build and Push Container Images
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, containerfiles ]
     tags: [ 'v*' ]
   pull_request:
     branches: [ main ]
