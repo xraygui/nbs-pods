@@ -79,6 +79,7 @@ start_service() {
     local compose_file=$(get_compose_file "$service")
     if [ -z "$compose_file" ]; then
         echo "Error: No compose file found for service $service"
+        echo "Searched for: $compose_file"
         return 1
     fi
     

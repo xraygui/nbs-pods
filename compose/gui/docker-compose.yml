@@ -4,7 +4,9 @@ networks:
     external: true
 services:
   qs-gui:
-    image: nbs_gui:latest
+    build:
+      context: ../../images/gui
+      dockerfile: Dockerfile
     volumes:
       - /run/user/${HOST_UID}/${WAYLAND_DISPLAY}:/tmp/${WAYLAND_DISPLAY}
       - ${NBS_PODS_DIR}/config/bluesky:/etc/bluesky

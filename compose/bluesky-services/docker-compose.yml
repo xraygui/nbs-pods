@@ -23,6 +23,14 @@ services:
     networks:
       - bluesky
 
+  zmq_proxy2:
+    image: bluesky
+    command: bluesky-0MQ-proxy 5577 5578
+    networks:
+      - bluesky
+    ports:
+      - "5578:5578"
+
   zookeeper:
     image: "docker.io/bitnami/zookeeper:latest"
     environment:
@@ -39,7 +47,7 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:29092,PLAINTEXT_HOST://:9092
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:29092,PLAINTEXT_HOST://kafka:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
     volumes:
       - bitnami-kafka:/bitnami/kafka
@@ -48,6 +56,19 @@ services:
         condition: service_started
     ports:
       - "9092:9092/tcp"
+    networks:
+      - bluesky
+
+  kafka-setup:
+    image: "docker.io/bitnami/kafka:latest"
+    depends_on:
+      - kafka
+    command: >
+      bash -c '
+        echo "Waiting for Kafka to be ready..."
+        sleep 10
+        kafka-topics.sh --create --if-not-exists --bootstrap-server kafka:29092 --topic nbs.bluesky.runengine.documents --partitions 1 --replication-factor 1
+      '
     networks:
       - bluesky
 
