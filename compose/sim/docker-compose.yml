@@ -6,7 +6,7 @@ networks:
 
 services:
   nbs-sim:
-    image: nbs_sim:latest
+    image: nbs:latest
     volumes:
       - ${BEAMLINE_PODS_DIR}/config/ipython:/usr/local/share/ipython
     command: nbs-sim --startup-dir /usr/local/share/ipython/profile_default/startup --list-pvs
