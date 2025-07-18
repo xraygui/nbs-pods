@@ -11,6 +11,8 @@ services:
     build:
       context: .
       dockerfile: images/nbs/Containerfile
+      args:
+        BASE_IMAGE: bluesky:latest
     image: nbs:latest
     depends_on:
       - bluesky
@@ -19,6 +21,8 @@ services:
     build:
       context: .
       dockerfile: images/gui/Containerfile
+      args:
+        BASE_IMAGE: nbs:latest
     image: nbs_gui:latest
     depends_on:
       - nbs

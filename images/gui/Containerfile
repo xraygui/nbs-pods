@@ -1,13 +1,14 @@
-FROM nbs
+ARG BASE_IMAGE=nbs
+FROM ${BASE_IMAGE}
 
 RUN dnf -y install qt5-qtbase-devel
 
-RUN conda install -y pyqt
-
-RUN conda install -yc conda-forge qt-wayland
+RUN pip3 install pyqt
+RUN pip3 install qt-wayland
 
 RUN pip3 install bluesky_queueserver_api qtconsole
 
+RUN pip3 install git+https://github.com/xraygui/livetable
 RUN pip3 install git+https://github.com/xraygui/nbs-gui
 
 CMD ["nbs-gui", "--profile", "default"]
