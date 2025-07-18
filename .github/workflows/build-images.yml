@@ -6,6 +6,7 @@ on:
     tags: [ 'v*' ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:  # Manual trigger
 
 env:
   REGISTRY: ghcr.io
@@ -56,7 +57,7 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
-    - name: Build and push nbs_gui image
+    - name: Build and push nbs-gui image
       uses: docker/build-push-action@v5
       with:
         context: .
