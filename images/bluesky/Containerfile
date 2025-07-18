@@ -1,0 +1,9 @@
+FROM fedora
+
+RUN dnf install -y python3 python3-pip git
+RUN pip3 install pyepics
+RUN pip3 install --pre databroker[all]
+RUN pip3 install bluesky
+RUN pip3 install nslsii tiled[all]
+RUN pip3 install git+https://github.com/bluesky/bluesky-adaptive.git@main#egg=bluesky-adaptive
+RUN pip3 install git+https://github.com/bluesky/bluesky-queueserver.git@main#egg=bluesky-queueserver
