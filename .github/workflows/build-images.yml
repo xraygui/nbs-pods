@@ -2,7 +2,7 @@ name: Build and Push Container Images
 
 on:
   push:
-    branches: [ main, containerfiles ]
+    branches: [ main ]
     tags: [ 'v*' ]
   pull_request:
     branches: [ main ]
@@ -33,38 +33,47 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Build and push bluesky image
+    - name: Build bluesky image
       uses: docker/build-push-action@v5
       with:
         context: .
         file: ./images/bluesky/Containerfile
-        push: true
-        tags: |
-          bluesky:latest
-          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/bluesky:latest
+        push: false
+        tags: bluesky:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
-    - name: Build and push nbs image
+    - name: Build nbs image
       uses: docker/build-push-action@v5
       with:
         context: .
         file: ./images/nbs/Containerfile
-        push: true
-        tags: |
-          nbs:latest
-          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs:latest
+        push: false
+        tags: nbs:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
-    - name: Build and push nbs-gui image
+    - name: Build nbs-gui image
       uses: docker/build-push-action@v5
       with:
         context: .
         file: ./images/gui/Containerfile
-        push: true
-        tags: |
-          nbs-gui:latest
-          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs-gui:latest
+        push: false
+        tags: nbs-gui:latest
         cache-from: type=gha
-        cache-to: type=gha,mode=max 
+        cache-to: type=gha,mode=max
+
+    - name: Tag and push bluesky to GHCR
+      run: |
+        docker tag bluesky:latest ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/bluesky:latest
+        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/bluesky:latest
+
+    - name: Tag and push nbs to GHCR
+      run: |
+        docker tag nbs:latest ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs:latest
+        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs:latest
+
+    - name: Tag and push nbs-gui to GHCR
+      run: |
+        docker tag nbs-gui:latest ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs-gui:latest
+        docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs-gui:latest 
