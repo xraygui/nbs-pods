@@ -1,15 +1,9 @@
-FROM conda-base
+FROM fedora
 
-RUN conda install -yc conda-forge pyepics
-
-RUN pip3 install databroker[all]==2.0.0b56
-
-RUN pip3 install bluesky==1.13
-
-RUN pip3 install nslsii tiled[all]==0.1.0b17
-
+RUN dnf install -y python3 python3-pip git
+RUN pip3 install pyepics
+RUN pip3 install --pre databroker[all]
+RUN pip3 install bluesky
+RUN pip3 install nslsii tiled[all]
 RUN pip3 install git+https://github.com/bluesky/bluesky-adaptive.git@main#egg=bluesky-adaptive
-
 RUN pip3 install git+https://github.com/bluesky/bluesky-queueserver.git@main#egg=bluesky-queueserver
-
-LABEL version="0.0.1" 
