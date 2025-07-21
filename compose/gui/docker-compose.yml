@@ -6,19 +6,25 @@ services:
   qs-gui:
     image: nbs_gui:latest
     volumes:
-      - /run/user/${HOST_UID}/${WAYLAND_DISPLAY}:/tmp/${WAYLAND_DISPLAY}
+      - /run/user/${HOST_UID}:/run/user/${HOST_UID}
       - ${NBS_PODS_DIR}/config/bluesky:/etc/bluesky
       - ${BEAMLINE_PODS_DIR}/config/ipython:/usr/local/share/ipython
       - ${NBS_PODS_DIR}/config/tiled:/etc/tiled
-
+    devices:
+      - /dev/dri:/dev/dri
+      - /dev/video0:/dev/video0
     environment:
       - WAYLAND_DISPLAY=${WAYLAND_DISPLAY}
       - QT_QPA_PLATFORM=wayland
       - IPYTHONDIR=/usr/local/share/ipython
-      - XDG_RUNTIME_DIR=/tmp
+      - XDG_RUNTIME_DIR=/run/user/${HOST_UID}
       - EPICS_CA_AUTO_ADDR_LIST=YES
       - QSERVER_ZMQ_INFO_ADDRESS=tcp://acq_qs:60625
       - QSERVER_ZMQ_CONTROL_ADDRESS=tcp://acq_qs:60615
-    command: nbs-gui --profile default
+    command: >
+      bash -c "
+        tail -f /dev/null
+        nbs-gui --profile default
+      "
     networks:
       - bluesky-services_bluesky

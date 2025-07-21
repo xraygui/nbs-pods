@@ -5,7 +5,11 @@ from bluesky.plan_stubs import mv as _mv, mvr as _mvr
 load_and_configure_everything()
 
 nslsii.configure_base(
-    get_ipython().user_ns, "nbs", publish_documents_with_kafka=False, bec=False
+    get_ipython().user_ns,
+    "nbs",
+    publish_documents_with_kafka=True,
+    bec=False,
+    pbar=False,
 )
 
 

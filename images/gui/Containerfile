@@ -5,7 +5,7 @@ RUN dnf -y install qt5-qtbase-devel qt5-qtwayland
 
 RUN pip3 install PyQt5
 
-RUN pip3 install bluesky_queueserver_api qtconsole
+RUN pip3 install qtconsole
 
 RUN pip3 install git+https://github.com/xraygui/livetable
 RUN pip3 install git+https://github.com/xraygui/nbs-gui

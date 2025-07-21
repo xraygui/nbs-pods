@@ -4,6 +4,7 @@ FROM ${BASE_IMAGE}
 RUN pip3 install git+https://github.com/xraygui/nbs-core
 RUN pip3 install git+https://github.com/xraygui/nbs-bl
 RUN pip3 install git+https://github.com/xraygui/nbs-sim
+RUN pip3 install git+https://github.com/nsls-ii-sst/sst_base
 
 # Create configuration directories
 RUN mkdir -p /etc/tiled/profiles
