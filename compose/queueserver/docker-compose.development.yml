@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  acq_qs:
+    image: nbs:latest
+    volumes:
+      - ${BEAMLINE_PODS_DIR}/config/ipython:/usr/local/share/ipython
+      - ${NBS_PODS_DIR}/config/tiled/profiles:/etc/tiled/profiles
+      - ${NBS_PODS_DIR}/config/bluesky:/etc/bluesky

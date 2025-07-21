@@ -6,9 +6,7 @@ networks:
 
 services:
   acq_qs:
-    image: nbs:latest
-    volumes:
-      - ${BEAMLINE_PODS_DIR}/config/ipython:/usr/local/share/ipython
+    image: ghcr.io/xraygui/nbs-pods/nbs:latest
     environment:
       - IPYTHONDIR=/usr/local/share/ipython
       - EPICS_CA_AUTO_ADDR_LIST=yes

@@ -18,13 +18,13 @@ services:
       - bluesky
 
   zmq_proxy:
-    image: bluesky
+    image: ghcr.io/xraygui/nbs-pods/bluesky:latest
     command: bluesky-0MQ-proxy 4567 5678
     networks:
       - bluesky
 
   zmq_proxy2:
-    image: bluesky
+    image: ghcr.io/xraygui/nbs-pods/bluesky:latest
     command: bluesky-0MQ-proxy 5577 5578
     networks:
       - bluesky

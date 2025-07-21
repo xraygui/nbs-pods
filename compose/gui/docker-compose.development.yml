@@ -1,3 +1,6 @@
 services:
   qs-gui:
-    command: tail -f /dev/null
+    volumes:
+      - ${NBS_PODS_DIR}/config/bluesky:/etc/bluesky
+      - ${BEAMLINE_PODS_DIR}/config/ipython:/usr/local/share/ipython
+      - ${NBS_PODS_DIR}/config/tiled:/etc/tiled
