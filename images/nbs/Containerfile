@@ -1,0 +1,19 @@
+ARG BASE_IMAGE=bluesky
+FROM ${BASE_IMAGE}
+
+RUN pip3 install git+https://github.com/cjtitus/caproto.git@no_macros
+RUN pip3 install git+https://github.com/xraygui/nbs-core
+RUN pip3 install git+https://github.com/xraygui/nbs-bl
+RUN pip3 install git+https://github.com/xraygui/nbs-sim
+RUN pip3 install git+https://github.com/nsls-ii-sst/sst_base
+
+# Create configuration directories
+RUN mkdir -p /etc/tiled/profiles
+RUN mkdir -p /etc/bluesky
+
+# Copy default configurations
+COPY config/tiled/profiles/ /etc/tiled/profiles/
+COPY config/bluesky/ /etc/bluesky/
+COPY config/ipython/ /usr/local/share/ipython/
+
+LABEL version="0.0.1" 

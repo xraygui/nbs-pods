@@ -39,6 +39,12 @@ usage() {
     exit 1
 }
 
+start_demo() {
+    for service in "bluesky-services" "gui" "queueserver" "sim"; do
+        start_service "$service" false
+    done
+}
+
 start_services() {
     local dev_mode=false
     local services=()
@@ -92,6 +98,9 @@ elif [ "$1" = "start" ]; then
 elif [ "$1" = "stop" ]; then
     shift
     stop_services "$@"
+elif [ "$1" = "demo" ]; then
+    shift
+    start_demo "$@"
 else
     usage
 fi 

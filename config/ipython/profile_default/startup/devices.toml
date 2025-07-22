@@ -25,10 +25,11 @@ prefix = "NBS_SIM:sc:"
 name = "ucal_sc"
 
 [en]
-_target = "nbs_bl.sim.EnPosFactory"
+_target = "sst_base.energy.EnPosFactory"
 _group = "source"
 _load_order = 2
-prefix = "NBS_SIM:energy:"
+prefix = ""
+#long_name = "SST Energy"
 name = "en"
 
 [eslit]

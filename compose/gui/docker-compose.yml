@@ -4,18 +4,17 @@ networks:
     external: true
 services:
   qs-gui:
-    image: nbs_gui:latest
+    image: ghcr.io/xraygui/nbs-pods/nbs-gui:latest
     volumes:
-      - /run/user/${HOST_UID}/${WAYLAND_DISPLAY}:/tmp/${WAYLAND_DISPLAY}
-      - ${NBS_PODS_DIR}/config/bluesky:/etc/bluesky
-      - ${BEAMLINE_PODS_DIR}/config/ipython:/usr/local/share/ipython
-      - ${NBS_PODS_DIR}/config/tiled:/etc/tiled
-
+      - /run/user/${HOST_UID}:/run/user/${HOST_UID}
+    devices:
+      - /dev/dri:/dev/dri
+      - /dev/video0:/dev/video0
     environment:
       - WAYLAND_DISPLAY=${WAYLAND_DISPLAY}
       - QT_QPA_PLATFORM=wayland
       - IPYTHONDIR=/usr/local/share/ipython
-      - XDG_RUNTIME_DIR=/tmp
+      - XDG_RUNTIME_DIR=/run/user/${HOST_UID}
       - EPICS_CA_AUTO_ADDR_LIST=YES
       - QSERVER_ZMQ_INFO_ADDRESS=tcp://acq_qs:60625
       - QSERVER_ZMQ_CONTROL_ADDRESS=tcp://acq_qs:60615

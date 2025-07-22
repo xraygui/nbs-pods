@@ -6,15 +6,10 @@ networks:
 
 services:
   acq_qs:
-    image: nbs
-    build: ${NBS_PODS_DIR}/images/nbs
-    volumes:
-      - ${BEAMLINE_PODS_DIR}/config/ipython:/usr/local/share/ipython
-      - ${NBS_PODS_DIR}/config/tiled/profiles:/etc/tiled/profiles
-      - ${NBS_PODS_DIR}/config/bluesky:/etc/bluesky
+    image: ghcr.io/xraygui/nbs-pods/nbs:latest
     environment:
       - IPYTHONDIR=/usr/local/share/ipython
       - EPICS_CA_AUTO_ADDR_LIST=yes
-    command: start-re-manager --kafka-topic=nbs.bluesky.runengine.documents --kafka-server=kafka:29092 --keep-re --redis-addr redis:6379 --zmq-publish-console ON --use-ipython-kernel ON --ipython-kernel-ip auto --startup-profile default
+    command: start-re-manager --keep-re --redis-addr redis:6379 --zmq-publish-console ON --use-ipython-kernel ON --ipython-kernel-ip auto --startup-profile default
     networks:
       - bluesky-services_bluesky

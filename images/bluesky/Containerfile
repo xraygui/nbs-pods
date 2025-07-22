@@ -1,0 +1,10 @@
+FROM fedora
+
+RUN dnf install -y python3 python3-pip git
+RUN pip3 install pyepics
+RUN pip3 install tiled[all]==v0.1.0-b17
+RUN pip3 install --pre databroker[all]==v2.0.0b57
+RUN pip3 install bluesky==1.14.2
+RUN pip3 install bluesky-queueserver==0.0.22 bluesky-queueserver-api==0.0.12
+RUN pip3 install nslsii
+RUN pip3 install bluesky-adaptive
