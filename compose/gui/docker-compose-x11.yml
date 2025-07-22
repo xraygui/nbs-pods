@@ -4,16 +4,10 @@ networks:
     external: true
 services:
   qs-gui:
-    image: nbs_gui:latest
+    image: ghcr.io/xraygui/nbs-pods/nbs-gui:latest
     volumes:
       - /tmp/.X11-unix/:/tmp/.X11-unix/
-      - /tmp/.docker.xauth:/tmp/.docker.xauth
-      - ../../config/bluesky:/etc/bluesky
-      - ../../config/ipython:/usr/local/share/ipython
-      - ../../config/tiled:/etc/tiled
-      - ${HOME}/work/nsls-ii-sst:/usr/local/src/nsls-ii-sst
-      - ${HOME}/work/xraygui:/usr/local/src/xraygui
-      - ${HOME}/work/ophyd:/usr/local/src/ophyd
+      - $HOME/.Xauthority:/tmp/.docker.xauth
     environment:
       - DISPLAY
       - IPYTHONDIR=/usr/local/share/ipython
@@ -22,18 +16,6 @@ services:
       - EPICS_CA_AUTO_ADDR_LIST=YES
       - QSERVER_ZMQ_INFO_ADDRESS=tcp://acq_qs:60625
       - QSERVER_ZMQ_CONTROL_ADDRESS=tcp://acq_qs:60615
-    command: >
-      bash -c "
-        pip3 install --no-deps --no-build-isolation -e /usr/local/src/ophyd &&
-        pip3 install --no-deps --no-build-isolation -e /usr/local/src/nsls-ii-sst/bluesky-widgets &&
-        pip3 install --no-deps --no-build-isolation -e /usr/local/src/xraygui/nbs-core &&
-        pip3 install --no-deps --no-build-isolation -e /usr/local/src/xraygui/nbs-bl &&
-        pip3 install --no-deps --no-build-isolation -e /usr/local/src/xraygui/nbs-gui &&
-        pip3 install --no-deps --no-build-isolation -e /usr/local/src/nsls-ii-sst/sst_base &&
-        pip3 install --no-deps --no-build-isolation -e /usr/local/src/nsls-ii-sst/sst_tes &&
-        pip3 install --no-deps --no-build-isolation -e /usr/local/src/nsls-ii-sst/ucal &&
-        pip3 install --no-deps --no-build-isolation -e /usr/local/src/nsls-ii-sst/ucal_sim &&
-        nbs-gui --profile default
-      " 
+    command: nbs-gui --profile default
     networks:
       - bluesky-services_bluesky

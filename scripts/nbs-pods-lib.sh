@@ -21,7 +21,6 @@ fi
 BASE_SERVICES=(
     "bluesky-services"
     "queueserver"
-    "bsui"
     "gui"
     "sim"
 )
