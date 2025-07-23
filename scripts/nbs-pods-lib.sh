@@ -25,18 +25,61 @@ BASE_SERVICES=(
     "sim"
 )
 
+# Function to detect display protocol
+detect_display_protocol() {
+    # Check for manual override first
+    if [ -n "$DISPLAY_PROTOCOL" ]; then
+        echo "$DISPLAY_PROTOCOL"
+        return 0
+    fi
+    
+    # Check for Wayland
+    if [ -n "$WAYLAND_DISPLAY" ] && [ -S "/run/user/$(id -u)/$WAYLAND_DISPLAY" ]; then
+        echo "wayland"
+        return 0
+    fi
+    
+    # Check for X11
+    if [ -n "$DISPLAY" ] && [ -S "/tmp/.X11-unix/X${DISPLAY#*:}" ]; then
+        echo "x11"
+        return 0
+    fi
+    
+    # Fallback to X11 if no specific protocol detected
+    echo "x11"
+    return 0
+}
+
 # Function to get the compose file path for a service
 get_compose_file() {
     local service=$1
     local compose_file=""
     
-    # Check for beamline override first
-    if [ -f "$BEAMLINE_PODS_DIR/compose/$service/docker-compose.yml" ]; then
-        compose_file="$BEAMLINE_PODS_DIR/compose/$service/docker-compose.yml"
-    # Then check for base service
-    elif [ -f "$NBS_PODS_DIR/compose/$service/docker-compose.yml" ]; then
-        compose_file="$NBS_PODS_DIR/compose/$service/docker-compose.yml"
+    # Special handling for GUI service with display detection
+    if [ "$service" = "gui" ]; then
+        local display_protocol=$(detect_display_protocol)
+        echo "Detected display protocol: $display_protocol" >&2
+        
+        # Check for beamline override first
+        if [ -f "$BEAMLINE_PODS_DIR/compose/$service/docker-compose.$display_protocol.yml" ]; then
+            compose_file="$BEAMLINE_PODS_DIR/compose/$service/docker-compose.$display_protocol.yml"
+        # Then check for base service
+        elif [ -f "$NBS_PODS_DIR/compose/$service/docker-compose.$display_protocol.yml" ]; then
+            compose_file="$NBS_PODS_DIR/compose/$service/docker-compose.$display_protocol.yml"
+        fi
     fi
+    
+    # If no display-specific file found, fall back to default behavior
+    if [ -z "$compose_file" ]; then
+        # Check for beamline override first
+        if [ -f "$BEAMLINE_PODS_DIR/compose/$service/docker-compose.yml" ]; then
+            compose_file="$BEAMLINE_PODS_DIR/compose/$service/docker-compose.yml"
+        # Then check for base service
+        elif [ -f "$NBS_PODS_DIR/compose/$service/docker-compose.yml" ]; then
+            compose_file="$NBS_PODS_DIR/compose/$service/docker-compose.yml"
+        fi
+    fi
+    
     echo "$compose_file"
 }
 
