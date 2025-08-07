@@ -39,6 +39,7 @@ jobs:
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/bluesky
         tags: |
+          type=raw,value=latest
           type=ref,event=branch
           type=ref,event=pr
           type=semver,pattern={{version}}
@@ -62,6 +63,7 @@ jobs:
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs
         tags: |
+          type=raw,value=latest
           type=ref,event=branch
           type=ref,event=pr
           type=semver,pattern={{version}}
@@ -77,7 +79,7 @@ jobs:
         tags: ${{ steps.meta-nbs.outputs.tags }}
         labels: ${{ steps.meta-nbs.outputs.labels }}
         build-args: |
-          BASE_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/bluesky:sha-${{ github.sha }}
+          BASE_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/bluesky:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
@@ -87,6 +89,7 @@ jobs:
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs-gui
         tags: |
+          type=raw,value=latest
           type=ref,event=branch
           type=ref,event=pr
           type=semver,pattern={{version}}
@@ -102,7 +105,7 @@ jobs:
         tags: ${{ steps.meta-gui.outputs.tags }}
         labels: ${{ steps.meta-gui.outputs.labels }}
         build-args: |
-          BASE_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs:sha-${{ github.sha }}
+          BASE_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
@@ -112,6 +115,7 @@ jobs:
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs-viewer
         tags: |
+          type=raw,value=latest
           type=ref,event=branch
           type=ref,event=pr
           type=semver,pattern={{version}}
@@ -127,6 +131,6 @@ jobs:
         tags: ${{ steps.meta-viewer.outputs.tags }}
         labels: ${{ steps.meta-viewer.outputs.labels }}
         build-args: |
-          BASE_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs:sha-${{ github.sha }}
+          BASE_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
