@@ -33,13 +33,25 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Extract version from tag
+      id: version
+      run: |
+        if [[ $GITHUB_REF == refs/tags/* ]]; then
+          VERSION=${GITHUB_REF#refs/tags/}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+        else
+          echo "version=latest" >> $GITHUB_OUTPUT
+        fi
+
     - name: Build and push bluesky image
       uses: docker/build-push-action@v5
       with:
         context: .
         file: ./images/bluesky/Containerfile
         push: true
-        tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/bluesky:latest
+        tags: |
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/bluesky:latest
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/bluesky:${{ steps.version.outputs.version }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
@@ -49,7 +61,9 @@ jobs:
         context: .
         file: ./images/nbs/Containerfile
         push: true
-        tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs:latest
+        tags: |
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs:latest
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs:${{ steps.version.outputs.version }}
         build-args: |
           BASE_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/bluesky:latest
         cache-from: type=gha
@@ -61,7 +75,9 @@ jobs:
         context: .
         file: ./images/gui/Containerfile
         push: true
-        tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs-gui:latest
+        tags: |
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs-gui:latest
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs-gui:${{ steps.version.outputs.version }}
         build-args: |
           BASE_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs:latest
         cache-from: type=gha
@@ -73,7 +89,9 @@ jobs:
         context: .
         file: ./images/viewer/Containerfile
         push: true
-        tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs-viewer:latest
+        tags: |
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs-viewer:latest
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs-viewer:${{ steps.version.outputs.version }}
         build-args: |
           BASE_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs:latest
         cache-from: type=gha
