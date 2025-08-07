@@ -33,8 +33,8 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Docker meta
-      id: meta
+    - name: Docker meta for bluesky
+      id: meta-bluesky
       uses: docker/metadata-action@v5
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/bluesky
@@ -51,10 +51,22 @@ jobs:
         context: .
         file: ./images/bluesky/Containerfile
         push: true
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
+        tags: ${{ steps.meta-bluesky.outputs.tags }}
+        labels: ${{ steps.meta-bluesky.outputs.labels }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
+
+    - name: Docker meta for nbs
+      id: meta-nbs
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=sha
 
     - name: Build and push nbs image
       uses: docker/build-push-action@v5
@@ -62,12 +74,24 @@ jobs:
         context: .
         file: ./images/nbs/Containerfile
         push: true
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
+        tags: ${{ steps.meta-nbs.outputs.tags }}
+        labels: ${{ steps.meta-nbs.outputs.labels }}
         build-args: |
           BASE_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/bluesky:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
+
+    - name: Docker meta for nbs-gui
+      id: meta-gui
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs-gui
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=sha
 
     - name: Build and push nbs-gui image
       uses: docker/build-push-action@v5
@@ -75,12 +99,24 @@ jobs:
         context: .
         file: ./images/gui/Containerfile
         push: true
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
+        tags: ${{ steps.meta-gui.outputs.tags }}
+        labels: ${{ steps.meta-gui.outputs.labels }}
         build-args: |
           BASE_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
+
+    - name: Docker meta for nbs-viewer
+      id: meta-viewer
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs-viewer
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=sha
 
     - name: Build and push nbs-viewer image
       uses: docker/build-push-action@v5
@@ -88,8 +124,8 @@ jobs:
         context: .
         file: ./images/viewer/Containerfile
         push: true
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
+        tags: ${{ steps.meta-viewer.outputs.tags }}
+        labels: ${{ steps.meta-viewer.outputs.labels }}
         build-args: |
           BASE_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/nbs:latest
         cache-from: type=gha
