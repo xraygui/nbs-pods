@@ -40,7 +40,7 @@ usage() {
 }
 
 start_demo() {
-    for service in "bluesky-services" "gui" "queueserver" "sim"; do
+    for service in "bluesky-services" "gui" "queueserver" "sim" "viewer"; do
         start_service "$service" false
     done
 }

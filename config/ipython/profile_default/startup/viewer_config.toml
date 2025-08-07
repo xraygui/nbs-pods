@@ -1,0 +1,11 @@
+[[catalog]]
+label = "NBS Catalog Data"
+url = "http://tiled_server:8000"
+catalog_keys = []
+catalog_model = "nbscatalog"
+
+[[catalog]]
+label = "NBS Live Data"
+source_type = "kafka"
+config_file = "/etc/bluesky/kafka.yml"
+beamline_acronym = "nbs"

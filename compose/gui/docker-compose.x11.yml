@@ -6,13 +6,11 @@ services:
   qs-gui:
     image: ghcr.io/xraygui/nbs-pods/nbs-gui:latest
     volumes:
-      - /tmp/.X11-unix/:/tmp/.X11-unix/
-      - $HOME/.Xauthority:/tmp/.docker.xauth
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
     environment:
-      - DISPLAY
+      - DISPLAY=${DISPLAY}
+      - QT_QPA_PLATFORM=xcb
       - IPYTHONDIR=/usr/local/share/ipython
-      - XAUTHORITY=/tmp/.docker.xauth
-      - XDG_RUNTIME_DIR=/tmp/runtime-${USER}
       - EPICS_CA_AUTO_ADDR_LIST=YES
       - QSERVER_ZMQ_INFO_ADDRESS=tcp://acq_qs:60625
       - QSERVER_ZMQ_CONTROL_ADDRESS=tcp://acq_qs:60615

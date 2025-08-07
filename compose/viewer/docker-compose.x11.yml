@@ -1,0 +1,16 @@
+version: '3'
+networks:
+  bluesky-services_bluesky:
+    external: true
+services:
+  nbs-viewer:
+    image: ghcr.io/xraygui/nbs-pods/nbs-viewer:latest
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_QPA_PLATFORM=xcb
+      - IPYTHONDIR=/usr/local/share/ipython
+    command: nbs-viewer
+    networks:
+      - bluesky-services_bluesky
