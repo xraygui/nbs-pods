@@ -23,6 +23,7 @@ BASE_SERVICES=(
     "queueserver"
     "gui"
     "sim"
+    "viewer"
 )
 
 # Function to detect display protocol
@@ -56,7 +57,7 @@ get_compose_file() {
     local compose_file=""
     
     # Special handling for GUI service with display detection
-    if [ "$service" = "gui" ]; then
+    if [ "$service" = "gui" ] || [ "$service" = "viewer" ]; then
         local display_protocol=$(detect_display_protocol)
         echo "Detected display protocol: $display_protocol" >&2
         

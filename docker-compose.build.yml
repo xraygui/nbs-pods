@@ -26,3 +26,13 @@ services:
     image: nbs_gui:latest
     depends_on:
       - nbs
+
+  nbs_viewer:
+    build:
+      context: .
+      dockerfile: images/viewer/Containerfile
+      args:
+        BASE_IMAGE: nbs:latest
+    image: nbs_viewer:latest
+    depends_on:
+      - nbs
