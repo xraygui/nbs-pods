@@ -7,8 +7,7 @@ RUN pip3 install PyQt5
 
 RUN pip3 install qtconsole
 
-RUN pip3 install git+https://github.com/xraygui/livetable
-RUN pip3 install git+https://github.com/xraygui/nbs-gui
+RUN pip3 install git+https://github.com/xraygui/nbs-gui@v0.1.0
 
 CMD ["nbs-gui", "--profile", "default"]
 
