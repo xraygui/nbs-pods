@@ -62,14 +62,14 @@ pyside6 = "*"
 
 [feature.gui.pypi-dependencies]
 livetable = { git="https://github.com/xraygui/livetable" }
-nbs-gui = { git="https://github.com/xraygui/nbs-gui", rev="v0.1.0" }
+nbs-gui = { git="https://github.com/xraygui/nbs-gui", rev="v0.1.1" }
 qtconsole = "*"
 
 [feature.viewer.dependencies]
 pyqtgraph = ">=0.13.7,<0.14"
 
 [feature.viewer.pypi-dependencies]
-nbs-viewer = ">=0.3.2, <0.4"
+nbs-viewer = ">=0.3.4, <0.4"
 
 
 [feature.qs.tasks]

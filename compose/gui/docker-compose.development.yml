@@ -4,3 +4,6 @@ services:
       - ${NBS_PODS_DIR}/config/bluesky:/etc/bluesky
       - ${BEAMLINE_PODS_DIR}/config/ipython:/usr/local/share/ipython
       - ${NBS_PODS_DIR}/config/tiled:/etc/tiled
+      - ${NBSDIR}:/usr/local/src/xraygui
+      - ${SSTDIR}:/usr/local/src/nsls-ii-sst
+    command: pixi run gui-dev

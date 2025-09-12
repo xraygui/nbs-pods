@@ -6,10 +6,10 @@ networks:
 
 services:
   acq_qs:
-    image: ghcr.io/xraygui/nbs-pods/nbs:latest
+    image: ghcr.io/xraygui/nbs-pods/queueserver:latest
     environment:
       - IPYTHONDIR=/usr/local/share/ipython
       - EPICS_CA_AUTO_ADDR_LIST=yes
-    command: start-re-manager --keep-re --redis-addr redis:6379 --zmq-publish-console ON --use-ipython-kernel ON --ipython-kernel-ip auto --startup-profile default
+    command: pixi run qs
     networks:
       - bluesky-services_bluesky

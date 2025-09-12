@@ -6,7 +6,7 @@ networks:
 
 services:
   nbs-sim:
-    image: ghcr.io/xraygui/nbs-pods/nbs:latest
-    command: nbs-sim --startup-dir /usr/local/share/ipython/profile_default/startup --list-pvs
+    image: ghcr.io/xraygui/nbs-pods/sim:latest
+    command: pixi run sim
     networks:
       - bluesky-services_bluesky

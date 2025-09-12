@@ -4,7 +4,7 @@ networks:
     external: true
 services:
   qs-gui:
-    image: ghcr.io/xraygui/nbs-pods/nbs-gui:latest
+    image: ghcr.io/xraygui/nbs-pods/gui:latest
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
     environment:
@@ -14,6 +14,6 @@ services:
       - EPICS_CA_AUTO_ADDR_LIST=YES
       - QSERVER_ZMQ_INFO_ADDRESS=tcp://acq_qs:60625
       - QSERVER_ZMQ_CONTROL_ADDRESS=tcp://acq_qs:60615
-    command: nbs-gui --profile default
+    command: pixi run gui
     networks:
       - bluesky-services_bluesky
