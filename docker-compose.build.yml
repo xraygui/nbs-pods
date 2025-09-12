@@ -7,32 +7,42 @@ services:
       dockerfile: images/bluesky/Containerfile
     image: bluesky:latest
 
-  nbs:
+  queueserver:
     build:
       context: .
-      dockerfile: images/nbs/Containerfile
+      dockerfile: images/queueserver/Containerfile
       args:
         BASE_IMAGE: bluesky:latest
-    image: nbs:latest
+    image: queueserver:latest
     depends_on:
       - bluesky
 
-  nbs_gui:
+  gui:
     build:
       context: .
       dockerfile: images/gui/Containerfile
       args:
-        BASE_IMAGE: nbs:latest
-    image: nbs_gui:latest
+        BASE_IMAGE: bluesky:latest
+    image: gui:latest
     depends_on:
-      - nbs
+      - bluesky
 
-  nbs_viewer:
+  viewer:
     build:
       context: .
       dockerfile: images/viewer/Containerfile
       args:
-        BASE_IMAGE: nbs:latest
-    image: nbs_viewer:latest
+        BASE_IMAGE: bluesky:latest
+    image: viewer:latest
     depends_on:
-      - nbs
+      - bluesky
+
+  sim:
+    build:
+      context: .
+      dockerfile: images/sim/Containerfile
+      args:
+        BASE_IMAGE: bluesky:latest
+    image: sim:latest
+    depends_on:
+      - bluesky

@@ -87,7 +87,7 @@ services:
       - bluesky
 
   tiled_server:
-    image: ghcr.io/bluesky/databroker:latest
+    image: ghcr.io/bluesky/databroker:v2.0.0b65
     command: tiled serve config /etc/tiled/config --host 0.0.0.0
     volumes:
       - ${NBS_PODS_DIR}/config/tiled/config:/etc/tiled/config

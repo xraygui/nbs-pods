@@ -1,14 +1,6 @@
-ARG BASE_IMAGE=nbs
+ARG BASE_IMAGE=bluesky
 FROM ${BASE_IMAGE}
 
-RUN dnf -y install qt5-qtbase-devel qt5-qtwayland
+RUN pixi install -e gui && rm -rf ~/.cache/rattler
 
-RUN pip3 install PyQt5
-
-RUN pip3 install qtconsole
-
-RUN pip3 install git+https://github.com/xraygui/nbs-gui@v0.1.0
-
-CMD ["nbs-gui", "--profile", "default"]
-
-LABEL version="0.0.1" 
+CMD ["pixi", "run", "gui"]

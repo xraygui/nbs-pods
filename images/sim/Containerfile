@@ -1,0 +1,6 @@
+ARG BASE_IMAGE=bluesky
+FROM ${BASE_IMAGE}
+
+RUN pixi install -e sim && rm -rf ~/.cache/rattler
+
+CMD ["pixi", "run", "sim"]

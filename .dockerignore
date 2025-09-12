@@ -1,0 +1,9 @@
+# Pixi cache directory
+config/ipython/profile_default/.pixi/
+**/.pixi/
+
+# Other common exclusions
+.git/
+.gitignore
+*.md
+README*
