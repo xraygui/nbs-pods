@@ -1,11 +1,7 @@
 services:
-  nbs-sim:
+  nbs-viewer:
     volumes:
       - ${NBSDIR}:/usr/local/src/xraygui
       - ${BEAMLINE_PODS_DIR}/config/ipython:/usr/local/share/ipython
-    image: sim
     command: >
-      bash -c "
-        tail -f /dev/null &&
-        pixi run sim-dev
-      "
+      bash -c "tail -f /dev/null &&  pixi run viewer-dev"

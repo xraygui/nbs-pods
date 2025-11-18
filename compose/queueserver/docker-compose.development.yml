@@ -7,4 +7,4 @@ services:
       - ${BEAMLINE_PODS_DIR}/config/ipython:/usr/local/share/ipython
       - ${NBS_PODS_DIR}/config/tiled/profiles:/etc/tiled/profiles
       - ${NBS_PODS_DIR}/config/bluesky:/etc/bluesky
-    command: pixi run qs-backend
+    command: pixi run qs-dev
