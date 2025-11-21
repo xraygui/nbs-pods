@@ -1,0 +1,22 @@
+version: '3'
+
+networks:
+  bluesky-services_bluesky:
+    external: true
+
+services:
+  acq_bsui:
+    image: bluesky:latest
+    volumes:
+      - ${NBS_PODS_DIR}/config/tiled/profiles:/etc/tiled/profiles
+      - ${NBS_PODS_DIR}/config/bluesky:/etc/bluesky
+    environment:
+      - IPYTHONDIR=/usr/local/share/ipython
+      - EPICS_CA_AUTO_ADDR_LIST=yes
+    command: >
+      bash -c "
+        tail -f /dev/null
+        ipython --profile default
+      "
+    networks:
+      - bluesky-services_bluesky

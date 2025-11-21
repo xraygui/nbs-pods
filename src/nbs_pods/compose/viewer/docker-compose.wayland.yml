@@ -6,7 +6,7 @@ services:
   nbs-viewer:
     image: ghcr.io/xraygui/nbs-pods/viewer:latest
     volumes:
-      - /run/user/${HOST_UID}:/run/user/${HOST_UID}
+      - /run/user/${UID}:/run/user/${UID}
     devices:
       - /dev/dri:/dev/dri
       - /dev/video0:/dev/video0
@@ -14,7 +14,7 @@ services:
       - WAYLAND_DISPLAY=${WAYLAND_DISPLAY}
       - QT_QPA_PLATFORM=wayland
       - IPYTHONDIR=/usr/local/share/ipython
-      - XDG_RUNTIME_DIR=/run/user/${HOST_UID}
+      - XDG_RUNTIME_DIR=/run/user/${UID}
     command: pixi run viewer
     networks:
       - bluesky-services_bluesky

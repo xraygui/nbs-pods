@@ -38,7 +38,8 @@ cp -r "$TEMPLATE_DIR"/* "$TARGET_DIR/"
 find "$TARGET_DIR" -type f -exec sed -i "s/\${BEAMLINE_NAME}/$BEAMLINE_NAME/g" {} +
 
 # Make scripts executable
-chmod +x "$TARGET_DIR/scripts/"*.sh
+chmod +x "$TARGET_DIR/scripts/"*.sh 2>/dev/null || true
+chmod +x "$TARGET_DIR/scripts/"*.py 2>/dev/null || true
 
 echo "Created $REPO_NAME repository with the following structure:"
 tree "$TARGET_DIR"

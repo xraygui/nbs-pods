@@ -6,7 +6,7 @@ services:
   qs-gui:
     image: ghcr.io/xraygui/nbs-pods/gui:latest
     volumes:
-      - /run/user/${HOST_UID}:/run/user/${HOST_UID}
+      - /run/user/${UID}:/run/user/${UID}
     devices:
       - /dev/dri:/dev/dri
       - /dev/video0:/dev/video0
@@ -14,7 +14,7 @@ services:
       - WAYLAND_DISPLAY=${WAYLAND_DISPLAY}
       - QT_QPA_PLATFORM=wayland
       - IPYTHONDIR=/usr/local/share/ipython
-      - XDG_RUNTIME_DIR=/run/user/${HOST_UID}
+      - XDG_RUNTIME_DIR=/run/user/${UID}
       - EPICS_CA_AUTO_ADDR_LIST=YES
       - QSERVER_ZMQ_INFO_ADDRESS=tcp://acq_qs:60625
       - QSERVER_ZMQ_CONTROL_ADDRESS=tcp://acq_qs:60615

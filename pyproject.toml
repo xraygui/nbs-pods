@@ -1,0 +1,53 @@
+[project]
+name = "nbs-pods"
+version = "0.1.0"
+description = "Containerized NBS (NIST Beamline Software) services for beamline simulation"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = []
+
+[project.scripts]
+nbs-pods = "nbs_pods.cli:main"
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+namespaces = true
+
+[tool.setuptools.package-data]
+nbs_pods = [
+    "compose/**/*",
+    "config/**/*",
+    "images/**/*",
+    "templates/**/*",
+]
+
+[tool.pixi.project]
+name = "nbs-pods"
+version = "0.1.0"
+channels = ["conda-forge"]
+platforms = ["linux-64"]
+description = "Containerized NBS (NIST Beamline Software) services for beamline simulation"
+
+[tool.pixi.dependencies]
+podman-compose = "*"
+python = ">=3.8"
+ipython = "*"
+pip = "*"
+
+[tool.pixi.pypi-dependencies]
+nbs-pods = { path = ".", editable = true }
+
+
+[tool.pixi.tasks]
+start = "nbs-pods start"
+stop = "nbs-pods stop"
+demo = "nbs-pods demo"
+list = "nbs-pods list"
+

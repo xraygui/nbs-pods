@@ -1,0 +1,5 @@
+services:
+  acq_bsui:
+    volumes:
+      - ${SSTDIR}:/usr/local/src/nsls-ii-sst
+      - ${NBSDIR}:/usr/local/src/xraygui
