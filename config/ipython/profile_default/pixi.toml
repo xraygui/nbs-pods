@@ -8,6 +8,7 @@ version = "2025.3.0"
 libc = "2.17"
 
 [feature.base.dependencies]
+pip = "*"
 bluesky-base = "*"
 bluesky-queueserver = "*"
 matplotlib-base= ">=3.9.3,<4"
@@ -43,15 +44,11 @@ bluesky-queueserver = "*"
 bluesky-httpserver = "*"
 
 [feature.sim-base.dependencies]
-pyepics = "*"
-python = ">=3.12.11,<3.13"
-bluesky-base = "*"
 pyzmq = ">=27.1.0,<28"
 
 [feature.sim.pypi-dependencies]
 ophyd = "*"
 nbs-sim = { git = "https://github.com/xraygui/nbs-sim", rev = "v0.1.0" }
-caproto = { git = "https://github.com/cjtitus/caproto.git", branch="no_macros" }
 
 [feature.gui-base.dependencies]
 asteval = ">=1.0.6,<2"
@@ -98,7 +95,7 @@ sim-dev = "scripts/sim-dev.sh"
 [environments]
 base = {features=["base"], solve-group="base"}
 qs = {features=["base", "nbs", "qs"], solve-group="base"}
-sim = {features=["sim-base", "sim", "nbs"]}
+sim = {features=["base", "sim-base", "sim", "nbs"]}
 gui = {features=["base", "nbs", "gui-base", "gui"], solve-group="base"}
 viewer = {features=["base", "gui-base", "viewer"], solve-group="base"}
 
