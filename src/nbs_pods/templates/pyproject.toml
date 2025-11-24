@@ -10,6 +10,10 @@ dependencies = []
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools.packages.find]
+where = ["src"]
+namespaces = true
+
 [project.scripts]
 "${BEAMLINE_NAME}-pods" = "${BEAMLINE_NAME}_pods.deploy:main"
 
@@ -27,7 +31,7 @@ ipython = "*"
 pip = "*"
 
 [tool.pixi.pypi-dependencies]
-nbs-pods = { git = "https://github.com/xraygui/nbs-pods.git" }
+nbs-pods = { git = "https://github.com/xraygui/nbs-pods.git", branch = "pixi" }
 ${BEAMLINE_NAME}-pods = { path = ".", editable = true }
 
 [tool.pixi.activation.env]

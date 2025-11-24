@@ -53,7 +53,11 @@ def copy_template_files(template_source, target_dir, beamline_name):
     target_dir.mkdir(parents=True, exist_ok=False)
 
     for item in template_source.iterdir():
-        target_item = target_dir / item.name
+        if item.name == "beamline_pods":
+            target_item_name = f"{beamline_name}_pods"
+        else:
+            target_item_name = item.name
+        target_item = target_dir / target_item_name
         if item.is_dir():
             copy_template_files(item, target_item, beamline_name)
         else:
@@ -66,7 +70,7 @@ def copy_template_files(template_source, target_dir, beamline_name):
                 shutil.copy2(item, target_item)
 
 
-def make_scripts_executable(target_dir):
+def make_scripts_executable(target_dir, beamline_name):
     """
     Make script files executable.
 
@@ -74,8 +78,13 @@ def make_scripts_executable(target_dir):
     ----------
     target_dir : Path
         Directory containing scripts
+    beamline_name : str
+        Beamline name to construct correct path
     """
-    script_files = [target_dir / "src" / "beamline-pods" / "deploy.py"]
+    beamline_pods_name = f"{beamline_name}_pods"
+    script_files = [
+        target_dir / "src" / beamline_pods_name / "deploy.py",
+    ]
     for script_file in script_files:
         if script_file.exists():
             os.chmod(script_file, 0o755)
@@ -99,7 +108,7 @@ def init_git_repo(target_dir):
     )
 
 
-def create_beamline_pods(beamline_name, target_dir, init_git=True):
+def create_beamline_pods(beamline_name, target_dir, init_git=True, dry_run=False):
     """
     Create a new beamline pods package from templates.
 
@@ -121,7 +130,7 @@ def create_beamline_pods(beamline_name, target_dir, init_git=True):
     """
     validate_beamline_name(beamline_name)
 
-    target_dir = Path(target_dir).resolve()
+    target_dir = Path(target_dir).resolve() / f"{beamline_name}-pods"
     if target_dir.exists():
         raise ValueError(f"Target directory already exists: {target_dir}")
 
@@ -143,8 +152,12 @@ def create_beamline_pods(beamline_name, target_dir, init_git=True):
                 "Make sure nbs-pods is properly installed."
             )
 
+    if dry_run:
+        print(f"Dry run: Would create {beamline_name}-pods package in {target_dir}")
+        return
+
     copy_template_files(template_dir, target_dir, beamline_name)
-    make_scripts_executable(target_dir)
+    make_scripts_executable(target_dir, beamline_name)
 
     if init_git:
         try:
@@ -179,6 +192,11 @@ def main():
         help="Target directory where the package will be created",
     )
     parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Dry run the creation process",
+    )
+    parser.add_argument(
         "--no-git",
         action="store_true",
         help="Skip git repository initialization",
@@ -188,7 +206,10 @@ def main():
 
     try:
         create_beamline_pods(
-            args.beamline_name, args.target_dir, init_git=not args.no_git
+            args.beamline_name,
+            args.target_dir,
+            init_git=not args.no_git,
+            dry_run=args.dry_run,
         )
     except (ValueError, RuntimeError) as e:
         print(f"Error: {e}", file=sys.stderr)
