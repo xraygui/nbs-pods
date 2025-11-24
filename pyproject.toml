@@ -8,6 +8,7 @@ dependencies = []
 
 [project.scripts]
 nbs-pods = "nbs_pods.cli:main"
+nbs-pods-create = "nbs_pods.create:main"
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
@@ -19,6 +20,7 @@ include-package-data = true
 [tool.setuptools.packages.find]
 where = ["src"]
 namespaces = true
+exclude = ["nbs_pods.templates*"]
 
 [tool.setuptools.package-data]
 nbs_pods = [
@@ -50,4 +52,5 @@ start = "nbs-pods start"
 stop = "nbs-pods stop"
 demo = "nbs-pods demo"
 list = "nbs-pods list"
+create = "nbs-pods-create"
 

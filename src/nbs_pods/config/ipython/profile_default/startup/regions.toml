@@ -1,20 +1,101 @@
-na_xas = { edge = "Na", region = [1055, 1.0, 1065, 0.2, 1070, 0.1, 1080, 0.2, 1100, 1.0, 1140] , name = "Na K-edge XAS"}
-zn_xas = { edge = "Zn", region = [1010, 0.5, 1015, 0.125, 1030, 0.2, 1040, 0.25, 1060, 1.0, 1080], name = "Zn L-edge XAS"}
-cu_xas = { edge = "Cu", region = [915, 0.5, 920, 0.25, 926, 0.17, 934.5, 0.25, 947, 0.2, 954, 0.5, 960, 1, 980], name = "Cu L-edge XAS"}
-ce_xas = { edge = "Ce", region = [855, 1, 865, 0.5, 870, 0.2, 875, 0.1, 885, 0.2, 891, 0.1, 901, 0.2, 905, 0.5, 910, 1, 935], name = "Ce M4,5 Edge XAS"}
-ni_xas = { edge = "Ni", region = [830, 1, 840, 0.5, 845, 0.2, 848, 0.1, 858, 0.2, 867, 0.1, 874, 0.5, 882, 1, 900], name = "Ni L-edge XAS"}
-co_xas = { edge = "Co", region = [755, 1, 765, 0.5, 772, 0.2, 775, 0.1, 784, 0.2, 790, 0.1, 797, 0.2, 800, 0.5, 805, 1, 810, 2, 830], name = "Co L-edge XAS"}
-fe_xas = { edge = "Fe", region = [690, 1, 700, 0.5, 704, 0.2, 707, 0.1, 715, 0.5, 719, 0.1, 725, 0.5, 730, 1, 760], name = "Fe L-edge XAS"}
-f_xas = { edge = "F", region = [650, 0.3, 680, 0.1, 705, 0.2, 720, 0.4, 730], name = "F K-edge XAS"}
-mn_xas = { edge = "Mn", region = [625, 0.5, 635, 0.2, 638, 0.1, 645, 0.2, 650, 0.1, 655, 0.5, 670, 1, 690], name = "Mn L-edge XAS"}
-o_xas = { edge = "O", region = [515, 0.5, 520, 0.2, 526, 0.05, 535, 0.1, 545, 0.25, 555, 0.5, 585, 1, 600], name = "O K-edge XAS"}
-v_xas = { edge = "O", region = [505, 0.2, 510, 0.1, 535, 0.2, 545, 0.3, 565], name = "V L-edge XAS"}
-ti_xas = { edge = "Ti", region = [430, 1, 450, 0.1, 470, 0.2, 480, 0.5, 500, 1, 510], name = "Ti L-edge XAS"}
-n_xas = { edge = "N", region = [380, 0.5, 395, 0.1, 397, 0.05, 403, 0.1, 407, 0.2, 417, 0.5, 440, 2, 480], name = "N K-edge XAS"}
-c_xas = { edge = "C", region = [260, 1, 263, 0.5, 284, 0.1, 292, 0.2, 300, 0.4, 310, 0.5, 320, 2, 350], name = "C K-edge XAS"}
-sr_xas = { edge = "Sr", region = [245, 1, 255, 0.5, 260, 0.2, 265, 0.1, 290, 0.2, 300, 0.4, 310, 1, 320], name = "Sr M3 Edge XAS"}
-mo_xas = { edge = "O", region = [220, 0.3, 225, 0.1, 240, 0.3, 250], name = "Mo M4,5 Edge XAS"}
-mo2_xas = { edge = "N", region = [380, 0.3, 390, 0.2, 415, 0.3, 425], name = "Mo M3 Edge XAS"}
-k_xas = {edge = "C", region = [275, 0.2, 295, 0.1, 310, 0.2, 320], name = "K L2,3 Edge XAS"}
-si_xas = {edge = "Si", region = [1820, 0.5, 1835, 0.2, 1875, 0.5, 1910], name = "Si XAS"}
-mg_xas = {edge = "Mg", region = [1270, 0.3, 1300, 0.2, 1340, 0.5, 1360, 1, 1380], name = "Mg XAS"}
+[na_xas]
+edge = "Na"
+region = [ 1055, 1.0, 1065, 0.2, 1070, 0.1, 1080, 0.2, 1100, 1.0, 1140,]
+name = "Na K-edge XAS"
+
+[zn_xas]
+edge = "Zn"
+region = [ 1010, 0.5, 1015, 0.125, 1030, 0.2, 1040, 0.25, 1060, 1.0, 1080,]
+name = "Zn L-edge XAS"
+
+[cu_xas]
+edge = "L2,3"
+region = [ 915.0, 0.5, 920.0, 0.25, 926.0, 0.17, 934.5, 0.25, 947.0, 0.2, 954.0, 0.5, 960.0, 1.0, 980.0,]
+name = "Cu L-edge XAS"
+element = "Cu"
+
+[ce_xas]
+edge = "M4,5"
+region = [ 855.0, 1.0, 865.0, 0.5, 870.0, 0.2, 875.0, 0.1, 885.0, 0.2, 891.0, 0.1, 901.0, 0.2, 905.0, 0.5, 910.0, 1.0, 935.0,]
+name = "Ce M4,5 Edge XAS"
+element = "Ce"
+
+[ni_xas]
+edge = "Ni"
+region = [ 830, 1, 840, 0.5, 845, 0.2, 848, 0.1, 858, 0.2, 867, 0.1, 874, 0.5, 882, 1, 900,]
+name = "Ni L-edge XAS"
+
+[co_xas]
+edge = "Co"
+region = [ 755, 1, 765, 0.5, 772, 0.2, 775, 0.1, 784, 0.2, 790, 0.1, 797, 0.2, 800, 0.5, 805, 1, 810, 2, 830,]
+name = "Co L-edge XAS"
+
+[fe_xas]
+edge = "Fe"
+region = [ 690, 1, 700, 0.5, 704, 0.2, 707, 0.1, 715, 0.5, 719, 0.1, 725, 0.5, 730, 1, 760,]
+name = "Fe L-edge XAS"
+
+[f_xas]
+edge = "F"
+region = [ 650, 0.3, 680, 0.1, 705, 0.2, 720, 0.4, 730,]
+name = "F K-edge XAS"
+
+[mn_xas]
+edge = "Mn"
+region = [ 625, 0.5, 635, 0.2, 638, 0.1, 645, 0.2, 650, 0.1, 655, 0.5, 670, 1, 690,]
+name = "Mn L-edge XAS"
+
+[o_xas]
+edge = "O"
+region = [ 515, 0.5, 520, 0.2, 526, 0.05, 535, 0.1, 545, 0.25, 555, 0.5, 585, 1, 600,]
+name = "O K-edge XAS"
+
+[v_xas]
+edge = "O"
+region = [ 505, 0.2, 510, 0.1, 535, 0.2, 545, 0.3, 565,]
+name = "V L-edge XAS"
+
+[ti_xas]
+edge = "Ti"
+region = [ 430, 1, 450, 0.1, 470, 0.2, 480, 0.5, 500, 1, 510,]
+name = "Ti L-edge XAS"
+
+[n_xas]
+edge = "N"
+region = [ 380, 0.5, 395, 0.1, 397, 0.05, 403, 0.1, 407, 0.2, 417, 0.5, 440, 2, 480,]
+name = "N K-edge XAS"
+
+[c_xas]
+edge = "C"
+region = [ 260, 1, 263, 0.5, 284, 0.1, 292, 0.2, 300, 0.4, 310, 0.5, 320, 2, 350,]
+name = "C K-edge XAS"
+
+[sr_xas]
+edge = "Sr"
+region = [ 245, 1, 255, 0.5, 260, 0.2, 265, 0.1, 290, 0.2, 300, 0.4, 310, 1, 320,]
+name = "Sr M3 Edge XAS"
+
+[mo_xas]
+edge = "O"
+region = [ 220, 0.3, 225, 0.1, 240, 0.3, 250,]
+name = "Mo M4,5 Edge XAS"
+
+[mo2_xas]
+edge = "N"
+region = [ 380, 0.3, 390, 0.2, 415, 0.3, 425,]
+name = "Mo M3 Edge XAS"
+
+[k_xas]
+edge = "C"
+region = [ 275, 0.2, 295, 0.1, 310, 0.2, 320,]
+name = "K L2,3 Edge XAS"
+
+[si_xas]
+edge = "Si"
+region = [ 1820, 0.5, 1835, 0.2, 1875, 0.5, 1910,]
+name = "Si XAS"
+
+[mg_xas]
+edge = "Mg"
+region = [ 1270, 0.3, 1300, 0.2, 1340, 0.5, 1360, 1, 1380,]
+name = "Mg XAS"

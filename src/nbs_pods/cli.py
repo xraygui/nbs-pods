@@ -6,8 +6,20 @@ import subprocess
 import sys
 
 from nbs_pods.compose import build_compose_file_string
-from nbs_pods.config import get_nbs_pods_dir
+from nbs_pods.config import get_beamline_pods_dir, get_nbs_pods_dir
 from nbs_pods.services import get_all_services
+
+
+def setup_environment(beamline_pods_dir=None):
+    """Setup environment variables."""
+    env = os.environ.copy()
+    env["HOST_UID"] = str(os.getuid())
+    env["NBS_PODS_DIR"] = str(get_nbs_pods_dir())
+    if beamline_pods_dir is not None:
+        env["BEAMLINE_PODS_DIR"] = str(beamline_pods_dir)
+    else:
+        env["BEAMLINE_PODS_DIR"] = get_beamline_pods_dir()
+    return env
 
 
 def start_service(service, dev_mode=False, verbose=False):
@@ -41,9 +53,8 @@ def start_service(service, dev_mode=False, verbose=False):
         label = labels[i] if i < len(labels) else ""
         print(f"    - {compose_file} {label}", flush=True)
 
-    env = os.environ.copy()
+    env = setup_environment()
     env["COMPOSE_FILE"] = compose_file_string
-    env["NBS_PODS_DIR"] = str(get_nbs_pods_dir())
 
     result = subprocess.run(
         ["podman-compose", "up", "-d"],
@@ -79,9 +90,8 @@ def stop_service(service, verbose=False):
     else:
         compose_file_string = compose_files[0]
 
-    env = os.environ.copy()
+    env = setup_environment()
     env["COMPOSE_FILE"] = compose_file_string
-    env["NBS_PODS_DIR"] = str(get_nbs_pods_dir())
 
     result = subprocess.run(
         ["podman-compose", "down", "-v"],
@@ -97,7 +107,7 @@ def cmd_start(args):
     base_services, beamline_services = get_all_services()
     all_services = base_services + beamline_services
 
-    if not args.services:
+    if not args.services and not args.dev:
         for service in all_services:
             start_service(service, dev_mode=False)
         return

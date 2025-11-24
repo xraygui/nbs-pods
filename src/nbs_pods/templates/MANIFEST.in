@@ -1,0 +1,7 @@
+recursive-include src/beamline-pods/compose *
+recursive-include src/beamline-pods/config *
+recursive-include src/beamline-pods/images *
+recursive-include src/beamline-pods/templates *
+recursive-exclude src/beamline-pods/config/ipython/profile_default/.pixi *
+include README.md
+

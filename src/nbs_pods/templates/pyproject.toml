@@ -1,0 +1,41 @@
+[project]
+name = "${BEAMLINE_NAME}-pods"
+version = "0.1.0"
+description = "Beamline-specific configuration and services for ${BEAMLINE_NAME} beamline"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = []
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project.scripts]
+"${BEAMLINE_NAME}-pods" = "${BEAMLINE_NAME}_pods.deploy:main"
+
+[tool.pixi.project]
+name = "${BEAMLINE_NAME}-pods"
+version = "0.1.0"
+channels = ["conda-forge"]
+platforms = ["linux-64"]
+description = "Beamline-specific configuration and services for ${BEAMLINE_NAME} beamline"
+
+[tool.pixi.dependencies]
+podman-compose = "*"
+python = ">=3.8"
+ipython = "*"
+pip = "*"
+
+[tool.pixi.pypi-dependencies]
+nbs-pods = { git = "https://github.com/xraygui/nbs-pods.git" }
+${BEAMLINE_NAME}-pods = { path = ".", editable = true }
+
+[tool.pixi.activation.env]
+BEAMLINE_NAME = "${BEAMLINE_NAME}"
+
+[tool.pixi.tasks]
+start = "${BEAMLINE_NAME}-pods start"
+stop = "${BEAMLINE_NAME}-pods stop"
+demo = "${BEAMLINE_NAME}-pods demo"
+list = "${BEAMLINE_NAME}-pods list"
+
