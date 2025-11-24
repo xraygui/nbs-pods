@@ -1,7 +1,5 @@
 recursive-include src/nbs_pods/compose *
 recursive-include src/nbs_pods/config *
-recursive-include src/nbs_pods/images *
 recursive-include src/nbs_pods/templates *
 recursive-exclude src/nbs_pods/config/ipython/profile_default/.pixi *
 include README.md
-
