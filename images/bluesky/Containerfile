@@ -8,9 +8,9 @@ RUN mkdir -p /etc/pixi
 RUN mkdir -p /opt/pixi/envs
 
 # Copy default configurations
-COPY config/tiled/profiles/ /etc/tiled/profiles/
-COPY config/bluesky/ /etc/bluesky/
-COPY config/ipython/ /usr/local/share/ipython/
-COPY config/pixi/ /etc/pixi/
+COPY src/nbs_pods/config/tiled/profiles/ /etc/tiled/profiles/
+COPY src/nbs_pods/config/bluesky/ /etc/bluesky/
+COPY src/nbs_pods/config/ipython/ /usr/local/share/ipython/
+COPY src/nbs_pods/config/pixi/ /etc/pixi/
 
 WORKDIR /usr/local/share/ipython/profile_default
