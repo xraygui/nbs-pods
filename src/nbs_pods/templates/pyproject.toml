@@ -31,7 +31,7 @@ ipython = "*"
 pip = "*"
 
 [tool.pixi.pypi-dependencies]
-nbs-pods = { git = "https://github.com/xraygui/nbs-pods.git", branch = "pixi" }
+nbs-pods = { git = "https://github.com/xraygui/nbs-pods.git", rev = "v0.1.5"}
 ${BEAMLINE_NAME}-pods = { path = ".", editable = true }
 
 [tool.pixi.activation.env]
