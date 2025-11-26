@@ -9,8 +9,7 @@ from pathlib import Path
 
 def main():
     """Main entry point."""
-    script_dir = Path(__file__).parent
-    beamline_pods_dir = script_dir.parent
+    beamline_pods_dir = Path(__file__).parent
     beamline_name = beamline_pods_dir.name.replace("-pods", "")
 
     os.environ["BEAMLINE_PODS_DIR"] = str(beamline_pods_dir.resolve())
