@@ -35,8 +35,7 @@ bluesky-tiled-plugins = ">=2.0.0b67"
 ophyd-async = { version = ">=0.9.0, <0.10", extras = ["ca", "pva"] }
 
 [feature.nbs.pypi-dependencies]
-nbs-core = { git = "https://github.com/xraygui/nbs-core", rev = "v0.0.2" }
-nbs-bl = { git = "https://github.com/xraygui/nbs-bl", rev = "v0.1.2" }
+nbs-bl = { git = "https://github.com/xraygui/nbs-bl", branch = "beamline_startup" }
 sst-base = { git = "https://github.com/nsls-ii-sst/sst_base" }
 
 [feature.qs.dependencies]

@@ -4,6 +4,7 @@ import argparse
 import os
 import subprocess
 import sys
+from copy import copy
 
 from nbs_pods.compose import build_compose_file_string
 from nbs_pods.config import get_beamline_pods_dir, get_nbs_pods_dir
@@ -63,6 +64,7 @@ def start_service(service, dev_mode=False, verbose=False):
 
     if result.returncode != 0:
         sys.exit(result.returncode)
+    return result
 
 
 def stop_service(service, verbose=False):
@@ -100,6 +102,7 @@ def stop_service(service, verbose=False):
 
     if result.returncode != 0:
         sys.exit(result.returncode)
+    return result
 
 
 def cmd_start(args):
@@ -127,6 +130,15 @@ def cmd_start(args):
             print_available_services()
             sys.exit(1)
         start_service(item, True, verbose)
+
+
+def cmd_restart(args):
+    stop_args = copy(args)
+    stop_args.services += getattr(args, "dev", [])
+    print(f"Restarting {stop_args.services}")
+
+    cmd_stop(stop_args)
+    cmd_start(args)
 
 
 def cmd_stop(args):
@@ -195,6 +207,20 @@ def main():
         "-v", "--verbose", action="store_true", help="Verbose output"
     )
     start_parser.set_defaults(func=cmd_start)
+
+    restart_parser = subparsers.add_parser("restart", help="Restart services")
+    restart_parser.add_argument(
+        "services",
+        nargs="*",
+        help="Services to restart (use --dev before service name for dev mode)",
+    )
+    restart_parser.add_argument(
+        "--dev", nargs="*", help="Restart services in development mode", default=[]
+    )
+    restart_parser.add_argument(
+        "-v", "--verbose", action="store_true", help="Verbose output"
+    )
+    restart_parser.set_defaults(func=cmd_restart)
 
     stop_parser = subparsers.add_parser("stop", help="Stop services")
     stop_parser.add_argument(
