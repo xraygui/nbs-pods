@@ -8,10 +8,9 @@ from copy import copy
 
 from nbs_pods.compose import build_compose_file_string
 from nbs_pods.config import get_beamline_pods_dir, get_nbs_pods_dir
-from nbs_pods.services import get_all_services
+from nbs_pods.services import get_all_services, discover_gui_services
 
-default_gui_services = ["gui", "viewer"]
-gui_services = os.environ.get("GUI_SERVICES", []) + default_gui_services
+gui_services = discover_gui_services()
 
 def setup_environment(beamline_pods_dir=None):
     """Setup environment variables."""

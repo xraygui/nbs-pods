@@ -79,6 +79,28 @@ def discover_beamline_services():
 
     return sorted(services)
 
+def discover_gui_services():
+    """
+    Discover GUI services.
+    """
+    beamline_pods_dir = get_beamline_pods_dir()
+    nbs_pods_dir = get_nbs_pods_dir()
+
+    if beamline_pods_dir == nbs_pods_dir:
+        return []
+
+    services = ["gui", "viewer"]
+
+    compose_dir = beamline_pods_dir / "compose"
+    if compose_dir.exists():
+        for item in compose_dir.iterdir():
+            if item.is_dir() and item.name not in services:
+                x11_compose_file = item / "docker-compose.x11.yml"
+                wayland_compose_file = item / "docker-compose.wayland.yml"
+                if x11_compose_file.exists() or wayland_compose_file.exists():
+                    services.append(item.name)
+
+    return sorted(services)
 
 def get_all_services():
     """
