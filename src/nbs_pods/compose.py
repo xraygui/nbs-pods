@@ -6,7 +6,7 @@ from nbs_pods.config import get_beamline_pods_dir, get_nbs_pods_dir
 from nbs_pods.display import detect_display_protocol
 
 
-def get_compose_file(service, verbose=False):
+def get_compose_file(service, verbose=False, gui_services=["gui", "viewer"]):
     """
     Get the base compose file for a service.
 
@@ -25,7 +25,7 @@ def get_compose_file(service, verbose=False):
 
     compose_file = None
 
-    if service in ("gui", "viewer"):
+    if service in gui_services:
         display_protocol = detect_display_protocol()
         print(f"Detected display protocol: {display_protocol}", flush=True)
 
@@ -135,7 +135,7 @@ def get_compose_development(service, verbose=False):
     return None
 
 
-def build_compose_file_string(service, dev_mode=False, verbose=False):
+def build_compose_file_string(service, dev_mode=False, verbose=False, gui_services=["gui", "viewer"]):
     """
     Build the COMPOSE_FILE environment variable string.
 
@@ -156,7 +156,7 @@ def build_compose_file_string(service, dev_mode=False, verbose=False):
     RuntimeError
         If no compose file found for service
     """
-    compose_file = get_compose_file(service, verbose)
+    compose_file = get_compose_file(service, verbose, gui_services)
     if compose_file is None:
         raise RuntimeError(f"No compose file found for service {service}")
 

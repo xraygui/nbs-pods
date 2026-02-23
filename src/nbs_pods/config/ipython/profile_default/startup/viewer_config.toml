@@ -9,3 +9,4 @@ label = "NBS Live Data"
 source_type = "kafka"
 config_file = "/etc/bluesky/kafka.yml"
 beamline_acronym = "nbs"
+autoload = true

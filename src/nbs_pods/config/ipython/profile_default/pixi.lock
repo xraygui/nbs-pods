@@ -1181,9 +1181,9 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/zstd-1.5.7-hb8e6e7a_2.conda
       - pypi: https://files.pythonhosted.org/packages/5b/08/185c3b29b0698328b202e6c965c23187e2e29ead78cb468aab0a09ee97fc/aioca-1.8.1-py3-none-any.whl
       - pypi: git+https://github.com/xraygui/livetable#04456b1cf6c8b21559be8b5031858a67b448b84b
-      - pypi: git+https://github.com/xraygui/nbs-bl?rev=v0.1.2#3b2afa619db555295a9068cd71483133153a0eae
-      - pypi: git+https://github.com/xraygui/nbs-core?rev=v0.0.2#2c2f50ad423927df146a4e981c3c8c1c45b0f0d0
+      - pypi: git+https://github.com/xraygui/nbs-bl?branch=beamline_startup#389bc4807fd7edff6ce266d76f8dd6b96ac8ecee
       - pypi: git+https://github.com/xraygui/nbs-gui?rev=v0.1.1#c536de1d4f38e1095ed04a27c4371efbf4c3f157
+      - pypi: https://files.pythonhosted.org/packages/9d/be/339b1eb92b77310d8f4524047af8d25c1373a4ca36a441b33dd75ea11110/nbs_core-0.1.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/d7/40/e352883ce7ca9364f6429e19a91bb46d40e62e66668a0eb6d17f8de6a84c/ophyd_async-0.9.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/41/2f/f5066e95bb60a3a510727171c79499abed9b623f72e8bbad848634946e0a/p4p-4.2.0-cp312-cp312-manylinux2014_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/67/d8/8af47ecca80c365d5ffcdce6fae78ec71921052189c1486ba9dbac7a36f4/pvxslibs-1.3.2-cp312-cp312-manylinux2014_x86_64.whl
@@ -1776,8 +1776,8 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/zstandard-0.23.0-py312h4c3975b_3.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/zstd-1.5.7-hb8e6e7a_2.conda
       - pypi: https://files.pythonhosted.org/packages/5b/08/185c3b29b0698328b202e6c965c23187e2e29ead78cb468aab0a09ee97fc/aioca-1.8.1-py3-none-any.whl
-      - pypi: git+https://github.com/xraygui/nbs-bl?rev=v0.1.2#3b2afa619db555295a9068cd71483133153a0eae
-      - pypi: git+https://github.com/xraygui/nbs-core?rev=v0.0.2#2c2f50ad423927df146a4e981c3c8c1c45b0f0d0
+      - pypi: git+https://github.com/xraygui/nbs-bl?branch=beamline_startup#389bc4807fd7edff6ce266d76f8dd6b96ac8ecee
+      - pypi: https://files.pythonhosted.org/packages/9d/be/339b1eb92b77310d8f4524047af8d25c1373a4ca36a441b33dd75ea11110/nbs_core-0.1.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/d7/40/e352883ce7ca9364f6429e19a91bb46d40e62e66668a0eb6d17f8de6a84c/ophyd_async-0.9.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/41/2f/f5066e95bb60a3a510727171c79499abed9b623f72e8bbad848634946e0a/p4p-4.2.0-cp312-cp312-manylinux2014_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/67/d8/8af47ecca80c365d5ffcdce6fae78ec71921052189c1486ba9dbac7a36f4/pvxslibs-1.3.2-cp312-cp312-manylinux2014_x86_64.whl
@@ -2372,9 +2372,9 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/zstd-1.5.7-hb8e6e7a_2.conda
       - pypi: https://files.pythonhosted.org/packages/5b/08/185c3b29b0698328b202e6c965c23187e2e29ead78cb468aab0a09ee97fc/aioca-1.8.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/57/64/eff2564783bd650ca25e15938d1c5b459cda997574a510f7de69688cb0b4/asyncio-4.0.0-py3-none-any.whl
-      - pypi: git+https://github.com/xraygui/nbs-bl?rev=v0.1.2#3b2afa619db555295a9068cd71483133153a0eae
-      - pypi: git+https://github.com/xraygui/nbs-core?rev=v0.0.2#2c2f50ad423927df146a4e981c3c8c1c45b0f0d0
+      - pypi: git+https://github.com/xraygui/nbs-bl?branch=beamline_startup#389bc4807fd7edff6ce266d76f8dd6b96ac8ecee
       - pypi: git+https://github.com/xraygui/nbs-sim?rev=v0.1.0#a0de8056abdbd2c93887a4d3bb8bf17ab65dfa1d
+      - pypi: https://files.pythonhosted.org/packages/9d/be/339b1eb92b77310d8f4524047af8d25c1373a4ca36a441b33dd75ea11110/nbs_core-0.1.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/d7/40/e352883ce7ca9364f6429e19a91bb46d40e62e66668a0eb6d17f8de6a84c/ophyd_async-0.9.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/41/2f/f5066e95bb60a3a510727171c79499abed9b623f72e8bbad848634946e0a/p4p-4.2.0-cp312-cp312-manylinux2014_x86_64.whl
       - pypi: https://files.pythonhosted.org/packages/67/d8/8af47ecca80c365d5ffcdce6fae78ec71921052189c1486ba9dbac7a36f4/pvxslibs-1.3.2-cp312-cp312-manylinux2014_x86_64.whl
@@ -10656,36 +10656,28 @@ packages:
   - pkg:pypi/narwhals?source=compressed-mapping
   size: 248742
   timestamp: 1756119139962
-- pypi: git+https://github.com/xraygui/nbs-bl?rev=v0.1.2#3b2afa619db555295a9068cd71483133153a0eae
+- pypi: git+https://github.com/xraygui/nbs-bl?branch=beamline_startup#389bc4807fd7edff6ce266d76f8dd6b96ac8ecee
   name: nbs-bl
-  version: 0.1.2.dev11+g3b2afa619
+  version: 0.1.3.dev5+g389bc4807
   requires_dist:
   - bluesky
   - bluesky-queueserver
-  - databroker
-  - ophyd
-  - numpy
+  - databroker>=2.0.0b67
   - ipython
-  - redis-json-dict
-  - numpydoc
-  - nbs-core
-- pypi: git+https://github.com/xraygui/nbs-bl?rev=v0.1.2#3b2afa619db555295a9068cd71483133153a0eae
-  name: nbs-bl
-  version: 0.1.2
-  requires_dist:
-  - bluesky
-  - bluesky-queueserver
-  - databroker
-  - ophyd
+  - nbs-core>=0.1
   - numpy
-  - ipython
-  - redis-json-dict
   - numpydoc
-  - nbs-core
-- pypi: git+https://github.com/xraygui/nbs-core?rev=v0.0.2#2c2f50ad423927df146a4e981c3c8c1c45b0f0d0
+  - ophyd
+  - redis-json-dict
+  - tomli ; python_full_version < '3.11'
+  requires_python: '>=3.9'
+- pypi: https://files.pythonhosted.org/packages/9d/be/339b1eb92b77310d8f4524047af8d25c1373a4ca36a441b33dd75ea11110/nbs_core-0.1.0-py3-none-any.whl
   name: nbs-core
-  version: 0.0.2
-  requires_python: '>=3.7'
+  version: 0.1.0
+  sha256: 190fdeeff2c761dda4d060915feba53ad611cf427c327907472685665d234abb
+  requires_dist:
+  - tomli ; python_full_version < '3.11'
+  requires_python: '>=3.9'
 - pypi: git+https://github.com/xraygui/nbs-gui?rev=v0.1.1#c536de1d4f38e1095ed04a27c4371efbf4c3f157
   name: nbs-gui
   version: 0.1.1

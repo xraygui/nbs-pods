@@ -358,7 +358,7 @@ packages:
 - pypi: ./
   name: nbs-pods
   version: 0.1.0
-  sha256: a1ec6890a883e62ed0e6723f0a465f9748b6ea74ecc02dddc5d9524b1e65c8c3
+  sha256: d4ef84e876c9ec485cce0fd47c5ebd24f5582222d4bec77656648946adbbe2c6
   requires_python: '>=3.8'
   editable: true
 - conda: https://conda.anaconda.org/conda-forge/linux-64/ncurses-6.5-h2d0b736_3.conda

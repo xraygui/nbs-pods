@@ -21,3 +21,5 @@ services:
     command: pixi run gui
     networks:
       - bluesky-services_bluesky
+    cap-add:
+      - SYS_PTRACE

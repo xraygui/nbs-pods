@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from nbs_pods.config import get_beamline_pods_dir, get_nbs_pods_dir
-
+from glob import glob
 
 BASE_SERVICES = [
     "bluesky-services",
@@ -63,9 +63,11 @@ def discover_beamline_services():
     if compose_dir.exists():
         for item in compose_dir.iterdir():
             if item.is_dir() and item.name not in base_services:
-                compose_file = item / "docker-compose.yml"
-                if compose_file.exists():
-                    services.append(item.name)
+                compose_files = glob(str(item / "docker-compose*.yml"))
+                for compose_file in compose_files:
+                    if Path(compose_file).exists():
+                        services.append(item.name)
+                        break
 
     beamline_subdir = compose_dir / "beamline"
     if beamline_subdir.exists():

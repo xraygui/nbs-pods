@@ -10,6 +10,8 @@ from nbs_pods.compose import build_compose_file_string
 from nbs_pods.config import get_beamline_pods_dir, get_nbs_pods_dir
 from nbs_pods.services import get_all_services
 
+default_gui_services = ["gui", "viewer"]
+gui_services = os.environ.get("GUI_SERVICES", []) + default_gui_services
 
 def setup_environment(beamline_pods_dir=None):
     """Setup environment variables."""
@@ -38,7 +40,7 @@ def start_service(service, dev_mode=False, verbose=False):
     print(f"Starting {service}{mode_str}...", flush=True)
 
     try:
-        compose_file_string = build_compose_file_string(service, dev_mode, verbose)
+        compose_file_string = build_compose_file_string(service, dev_mode, verbose, gui_services)
     except RuntimeError as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
@@ -80,7 +82,7 @@ def stop_service(service, verbose=False):
 
     try:
         compose_file_string = build_compose_file_string(
-            service, dev_mode=False, verbose=verbose
+            service, dev_mode=False, verbose=verbose, gui_services=gui_services
         )
     except RuntimeError as e:
         print(f"Error: {e}", file=sys.stderr)
