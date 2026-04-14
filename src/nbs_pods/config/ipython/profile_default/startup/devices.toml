@@ -25,7 +25,7 @@ prefix = "NBS_SIM:sc:"
 name = "ucal_sc"
 
 [en]
-_target = "sst_base.energy.EnPosFactory"
+_target = "sst_base.energy.EnergySoftFactory"
 _group = "source"
 _load_order = 2
 prefix = ""

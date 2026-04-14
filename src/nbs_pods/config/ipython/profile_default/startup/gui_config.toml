@@ -26,7 +26,7 @@ psh4 = { visible = false }
 en = {"_role" = "energy", "load_order" = 1}
 
 [loaders]
-"EnPosFactory" = "nbs_bl.qt.models.energy.EnergyModel"
+"EnergySoftFactory" = "nbs_bl.qt.models.energy.EnergyModel"
 "I400SingleCh" = "nbs_gui.models.ScalarModel"
 "EpicsMotor" = "nbs_gui.models.MotorModel"
 "PrettyMotorFMBO" = "nbs_gui.models.MotorModel"

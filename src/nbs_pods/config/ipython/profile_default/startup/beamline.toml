@@ -31,3 +31,18 @@ host = "redisInfo"
 prefix = "nexafs-"
 port = 60737
 db = 4
+
+[settings.logging]
+enabled = true
+method = "nslsii"
+
+[settings.tiled_writer]
+enabled = true
+profile = "nbs"
+subscribe_method = "post_document"
+
+[settings.kafka]
+name = "nbs"
+
+[settings.zmq]
+hostname = "zmq_proxy2"
