@@ -4,13 +4,14 @@ networks:
     external: true
 services:
   nbs-viewer:
-    image: ghcr.io/xraygui/nbs-pods/viewer:latest
+    image: ${NBS_IMAGE_REG:-ghcr.io/xraygui/nbs-pods/}viewer:latest
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
     environment:
       - DISPLAY=${DISPLAY}
       - QT_QPA_PLATFORM=xcb
       - IPYTHONDIR=/usr/local/share/ipython
+      - NBS_SIM_MODE=1
     command: pixi run viewer
     networks:
       - bluesky-services_bluesky

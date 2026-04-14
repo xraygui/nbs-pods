@@ -6,7 +6,7 @@ networks:
 
 services:
   acq_bsui:
-    image: bluesky:latest
+    image: ${NBS_IMAGE_REG:-ghcr.io/xraygui/nbs-pods/}bluesky:latest
     volumes:
       - ${NBS_PODS_DIR}/config/tiled/profiles:/etc/tiled/profiles
       - ${NBS_PODS_DIR}/config/bluesky:/etc/bluesky

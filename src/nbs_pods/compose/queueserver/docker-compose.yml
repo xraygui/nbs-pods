@@ -6,10 +6,11 @@ networks:
 
 services:
   acq_qs:
-    image: ghcr.io/xraygui/nbs-pods/queueserver:latest
+    image: ${NBS_IMAGE_REG:-ghcr.io/xraygui/nbs-pods/}queueserver:latest
     environment:
       - IPYTHONDIR=/usr/local/share/ipython
       - EPICS_CA_AUTO_ADDR_LIST=yes
+      - NBS_SIM_MODE=1
     command: pixi run qs
     networks:
       - bluesky-services_bluesky

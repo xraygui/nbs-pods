@@ -6,7 +6,7 @@ networks:
 
 services:
   nbs-sim:
-    image: ghcr.io/xraygui/nbs-pods/sim:latest
+    image: ${NBS_IMAGE_REG:-ghcr.io/xraygui/nbs-pods/}sim:latest
     command: pixi run sim
     networks:
       - bluesky-services_bluesky
