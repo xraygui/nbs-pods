@@ -48,7 +48,7 @@ pyzmq = ">=27.1.0,<28"
 
 [feature.sim.pypi-dependencies]
 ophyd = "*"
-nbs-sim = ">=0.2.1"
+nbs-sim = ">=0.2.2"
 
 [feature.gui-base.dependencies]
 asteval = ">=1.0.6,<2"

@@ -11,6 +11,7 @@ services:
       - IPYTHONDIR=/usr/local/share/ipython
       - EPICS_CA_AUTO_ADDR_LIST=yes
       - NBS_SIM_MODE=1
+      - QS_REDIS_ADDR=redis
     command: pixi run qs
     networks:
       - bluesky-services_bluesky
