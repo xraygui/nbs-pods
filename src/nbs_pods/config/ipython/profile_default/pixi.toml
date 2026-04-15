@@ -48,7 +48,7 @@ pyzmq = ">=27.1.0,<28"
 
 [feature.sim.pypi-dependencies]
 ophyd = "*"
-nbs-sim = { git = "https://github.com/xraygui/nbs-sim", rev = "v0.2.0" }
+nbs-sim = ">=0.2.1"
 
 [feature.gui-base.dependencies]
 asteval = ">=1.0.6,<2"

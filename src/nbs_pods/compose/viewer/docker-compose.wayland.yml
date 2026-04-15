@@ -4,7 +4,7 @@ networks:
     external: true
 services:
   nbs-viewer:
-    image: ${NBS_IMAGE_REG:-ghcr.io/xraygui/nbs-pods/}viewer:latest
+    image: ghcr.io/xraygui/nbs-pods/viewer:latest
     volumes:
       - /run/user/${HOST_UID}:/run/user/${HOST_UID}
     devices:

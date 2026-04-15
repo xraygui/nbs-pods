@@ -1,5 +1,8 @@
-recursive-include src/nbs_pods/compose *
-recursive-include src/nbs_pods/config *
+recursive-include src/nbs_pods/compose *.yml *.yaml
+recursive-include src/nbs_pods/config *.toml *.py *.yml *.yaml *.json *.sh *.txt
 recursive-include src/nbs_pods/templates *
-recursive-exclude src/nbs_pods/config/ipython/profile_default/.pixi *
+prune src/nbs_pods/config/ipython/profile_default/.pixi
+global-exclude __pycache__ *.py[cod] .DS_Store
+global-exclude history.sqlite
+global-exclude *.log
 include README.md

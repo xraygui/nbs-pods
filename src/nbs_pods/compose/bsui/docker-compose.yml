@@ -13,10 +13,6 @@ services:
     environment:
       - IPYTHONDIR=/usr/local/share/ipython
       - EPICS_CA_AUTO_ADDR_LIST=yes
-    command: >
-      bash -c "
-        tail -f /dev/null
-        ipython --profile default
-      "
+    command: ipython --profile default
     networks:
       - bluesky-services_bluesky
