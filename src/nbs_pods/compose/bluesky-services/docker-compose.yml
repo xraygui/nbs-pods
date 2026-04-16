@@ -41,7 +41,7 @@ services:
   #    - bluesky
 
   kafka:
-    image: "docker.io/bitnami/kafka:latest"
+    image: "docker.io/bitnamilegacy/kafka:4.0.0-debian-12-r10"
     environment:
       - KAFKA_CFG_KRAFT_MODE_ENABLED=true
       - KAFKA_CFG_PROCESS_ROLES=controller,broker
@@ -63,7 +63,7 @@ services:
       - bluesky
 
   kafka-setup:
-    image: "docker.io/bitnami/kafka:latest"
+    image: "docker.io/bitnamilegacy/kafka:4.0.0-debian-12-r10"
     depends_on:
       - kafka
     command: >

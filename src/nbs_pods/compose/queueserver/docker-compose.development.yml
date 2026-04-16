@@ -6,5 +6,5 @@ services:
       - ${BEAMLINE_PODS_DIR}/config/ipython:/usr/local/share/ipython
       - ${NBS_PODS_DIR}/config/tiled/profiles:/etc/tiled/profiles
       - ${NBS_PODS_DIR}/config/bluesky:/etc/bluesky
-      - ${NBSDIR}:/usr/local/src/xraygui
+      - ${NBS_COLLECTION_PACKAGES}:/usr/local/src/collection_packages
     command: pixi run qs-dev
