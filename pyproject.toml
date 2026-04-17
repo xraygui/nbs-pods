@@ -1,34 +1,51 @@
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
 [project]
 name = "nbs-pods"
-dynamic = ["version"]
-description = "Containerized NBS (NIST Beamline Software) services for beamline simulation"
-readme = "README.md"
+authors = [
+    {name = "Charles Titus", email = "ctitus@bnl.gov"},
+]
 requires-python = ">=3.8"
+description = "Containerized NBS (NIST Beamline Software) services for beamline simulation"
+dynamic = ["version"]
+readme = "README.md"
+keywords = ["bluesky", "nsls-ii", "beamline", "containers", "podman"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: Public Domain",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+]
 dependencies = []
 
 [project.scripts]
 nbs-pods = "nbs_pods.cli:main"
 nbs-pods-create = "nbs_pods.create:main"
 
-[build-system]
-requires = ["setuptools>=61.0", "wheel", "setuptools-scm[toml]>=8"]
-build-backend = "setuptools.build_meta"
+[project.urls]
+homepage = "https://github.com/xraygui/nbs-pods"
 
-[tool.setuptools_scm]
+[tool.hatch.version]
+source = "vcs"
 
-[tool.setuptools]
-include-package-data = true
+[tool.hatch.build]
+skip-excluded-dirs = true
 
-[tool.setuptools.packages.find]
-where = ["src"]
-namespaces = true
-exclude = ["nbs_pods.templates*"]
+[tool.hatch.build.targets.sdist]
+exclude = [
+    "src/nbs_pods/config/ipython/profile_default/.pixi/**",
+    "**/history.sqlite",
+    "**/*.log",
+]
 
-[tool.setuptools.package-data]
-nbs_pods = [
-    "compose/**/*",
-    "config/**/*",
-    "templates/**/*",
+[tool.hatch.build.targets.wheel]
+packages = ["src/nbs_pods"]
+exclude = [
+    "src/nbs_pods/config/ipython/profile_default/.pixi/**",
+    "**/history.sqlite",
+    "**/*.log",
 ]
 
 [tool.pixi.project]
@@ -46,6 +63,14 @@ pip = "*"
 [tool.pixi.pypi-dependencies]
 nbs-pods = { path = ".", editable = true }
 
+[tool.pixi.feature.build.dependencies]
+hatch = "*"
+
+[tool.pixi.feature.build.tasks]
+build = "hatch build"
+
+[tool.pixi.environments]
+build = { features = ["build"], solve-group = "default" }
 
 [tool.pixi.tasks]
 start = "nbs-pods start"
@@ -53,4 +78,3 @@ stop = "nbs-pods stop"
 demo = "nbs-pods demo"
 list = "nbs-pods list"
 create = "nbs-pods-create"
-
