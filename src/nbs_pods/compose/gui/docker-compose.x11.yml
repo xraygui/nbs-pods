@@ -16,6 +16,8 @@ services:
       - QSERVER_ZMQ_CONTROL_ADDRESS=tcp://acq_qs:60615
       - NBS_SIM_MODE=1
     command: pixi run gui
+    dns:
+      - 10.89.0.1
     networks:
       - bluesky-services_bluesky
     cap-add:

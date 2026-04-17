@@ -8,5 +8,7 @@ services:
   nbs-sim:
     image: ${NBS_IMAGE_REG:-ghcr.io/xraygui/nbs-pods/}sim:latest
     command: pixi run sim
+    dns:
+      - 10.89.0.1
     networks:
       - bluesky-services_bluesky

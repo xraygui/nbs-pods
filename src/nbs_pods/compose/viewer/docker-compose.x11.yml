@@ -13,5 +13,7 @@ services:
       - IPYTHONDIR=/usr/local/share/ipython
       - NBS_SIM_MODE=1
     command: pixi run viewer
+    dns:
+      - 10.89.0.1
     networks:
       - bluesky-services_bluesky

@@ -13,5 +13,7 @@ services:
       - NBS_SIM_MODE=1
       - QS_REDIS_ADDR=redis
     command: pixi run qs
+    dns:
+      - 10.89.0.1
     networks:
       - bluesky-services_bluesky

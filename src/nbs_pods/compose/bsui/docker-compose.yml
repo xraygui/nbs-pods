@@ -14,5 +14,7 @@ services:
       - IPYTHONDIR=/usr/local/share/ipython
       - EPICS_CA_AUTO_ADDR_LIST=yes
     command: ipython --profile default
+    dns:
+      - 10.89.0.1
     networks:
       - bluesky-services_bluesky
