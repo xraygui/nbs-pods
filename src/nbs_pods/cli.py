@@ -78,7 +78,7 @@ def start_service(service, dev_mode=False, test_mode=False, hold_mode=False, ign
         command.append("-d")
     else:
         command.append("--abort-on-container-exit")
-        command.extend(["--exit-code-from", "main"])
+        command.extend(["--exit-code-from", service])
     result = subprocess.run(command, env=env)
 
     if result.returncode != 0:
