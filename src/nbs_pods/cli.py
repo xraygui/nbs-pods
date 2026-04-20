@@ -57,10 +57,15 @@ def start_service(service, dev_mode=False, test_mode=False, hold_mode=False, ign
     compose_files = compose_file_string.split(":")
     print("  Using compose files:")
     labels = ["(base)"]
-    if len(compose_files) > 1:
-        labels.append("(override)")
-    if dev_mode and len(compose_files) > 2:
-        labels.append("(development)")
+    for compose_file in compose_files[1:]:
+        compose_name = os.path.basename(compose_file)
+        label = ""
+        for key in override_keys:
+            if compose_name == f"docker-compose.{key}.yml":
+                label = f"({key})"
+                break
+        labels.append(label)
+
     for i, compose_file in enumerate(compose_files):
         label = labels[i] if i < len(labels) else ""
         print(f"    - {compose_file} {label}", flush=True)
@@ -91,7 +96,7 @@ def stop_service(service, verbose=False):
 
     try:
         compose_file_string = build_compose_file_string(
-            service, dev_mode=False, verbose=verbose, gui_services=gui_services
+            service, verbose=verbose, gui_services=gui_services
         )
     except RuntimeError as e:
         print(f"Error: {e}", file=sys.stderr)
@@ -129,6 +134,7 @@ def cmd_start(args):
     dev_services = args.dev
     test_services = args.test
     verbose = args.verbose
+    hold_mode = args.hold
     ignore_override = args.ignore_override
     for item in args.services:
         if item not in all_services:
@@ -136,19 +142,19 @@ def cmd_start(args):
             print_available_services()
             sys.exit(1)
 
-        start_service(item, verbose=verbose, ignore_override=ignore_override)
+        start_service(item, verbose=verbose, ignore_override=ignore_override, hold_mode=hold_mode)
     for item in dev_services:
         if item not in all_services:
             print(f"Error: Unknown service '{item}'", file=sys.stderr)
             print_available_services()
             sys.exit(1)
-        start_service(item, dev_mode=True, verbose=verbose, ignore_override=ignore_override)
+        start_service(item, dev_mode=True, verbose=verbose, ignore_override=ignore_override, hold_mode=hold_mode)
     for item in test_services:
         if item not in all_services:
             print(f"Error: Unknown service '{item}'", file=sys.stderr)
             print_available_services()
             sys.exit(1)
-        start_service(item, test_mode=True, verbose=verbose, ignore_override=ignore_override)
+        start_service(item, test_mode=True, verbose=verbose, ignore_override=ignore_override, hold_mode=hold_mode)
 
 
 def cmd_restart(args):
