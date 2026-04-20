@@ -67,7 +67,7 @@ def get_compose_file(service, verbose=False, gui_services=["gui", "viewer"]):
     return compose_file
 
 
-def get_compose_override(service, verbose=False):
+def get_compose_override(service, key="override",verbose=False):
     """
     Get the override compose file for a service.
 
@@ -85,14 +85,14 @@ def get_compose_override(service, verbose=False):
     nbs_pods_dir = get_nbs_pods_dir()
 
     beamline_file = (
-        beamline_pods_dir / "compose" / service / "docker-compose.override.yml"
+        beamline_pods_dir / "compose" / service / f"docker-compose.{key}.yml"
     )
     if verbose:
         print(f"Checking beamline file: {beamline_file}", flush=True)
     if beamline_file.exists():
         return beamline_file
 
-    nbs_file = nbs_pods_dir / "compose" / service / "docker-compose.override.yml"
+    nbs_file = nbs_pods_dir / "compose" / service / f"docker-compose.{key}.yml"
     if verbose:
         print(f"Checking nbs file: {nbs_file}", flush=True)
     if nbs_file.exists():
@@ -101,41 +101,7 @@ def get_compose_override(service, verbose=False):
     return None
 
 
-def get_compose_development(service, verbose=False):
-    """
-    Get the development compose file for a service.
-
-    Parameters
-    ----------
-    service : str
-        Service name
-
-    Returns
-    -------
-    Path | None
-        Path to development file, or None if not found
-    """
-    beamline_pods_dir = get_beamline_pods_dir()
-    nbs_pods_dir = get_nbs_pods_dir()
-
-    beamline_file = (
-        beamline_pods_dir / "compose" / service / "docker-compose.development.yml"
-    )
-    if verbose:
-        print(f"Checking beamline file: {beamline_file}", flush=True)
-    if beamline_file.exists():
-        return beamline_file
-
-    nbs_file = nbs_pods_dir / "compose" / service / "docker-compose.development.yml"
-    if verbose:
-        print(f"Checking nbs file: {nbs_file}", flush=True)
-    if nbs_file.exists():
-        return nbs_file
-
-    return None
-
-
-def build_compose_file_string(service, dev_mode=False, verbose=False, gui_services=["gui", "viewer"]):
+def build_compose_file_string(service, verbose=False, gui_services=["gui", "viewer"], override_keys=["override"]):
     """
     Build the COMPOSE_FILE environment variable string.
 
@@ -162,13 +128,9 @@ def build_compose_file_string(service, dev_mode=False, verbose=False, gui_servic
 
     compose_files = [compose_file]
 
-    override_file = get_compose_override(service, verbose)
-    if override_file:
-        compose_files.append(override_file)
-
-    if dev_mode:
-        dev_file = get_compose_development(service, verbose)
-        if dev_file:
-            compose_files.append(dev_file)
+    for key in override_keys:
+        override_file = get_compose_override(service, key=key, verbose=verbose)
+        if override_file:
+            compose_files.append(override_file)
 
     return ":".join(str(f) for f in compose_files)

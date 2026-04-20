@@ -24,7 +24,7 @@ def setup_environment(beamline_pods_dir=None):
     return env
 
 
-def start_service(service, dev_mode=False, verbose=False):
+def start_service(service, dev_mode=False, test_mode=False, hold_mode=False, ignore_override=False, verbose=False):
     """
     Start a service using podman-compose.
 
@@ -38,8 +38,18 @@ def start_service(service, dev_mode=False, verbose=False):
     mode_str = " (dev mode)" if dev_mode else ""
     print(f"Starting {service}{mode_str}...", flush=True)
 
+    override_keys = []
+    if not ignore_override:
+        override_keys.append("override")
+    if dev_mode:
+        override_keys.append("development")
+    if test_mode:
+        override_keys.append("test")
+    if hold_mode:
+        override_keys.append("hold")
+
     try:
-        compose_file_string = build_compose_file_string(service, dev_mode, verbose, gui_services)
+        compose_file_string = build_compose_file_string(service, verbose, gui_services, override_keys)
     except RuntimeError as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
@@ -111,31 +121,40 @@ def cmd_start(args):
     base_services, beamline_services = get_all_services()
     all_services = base_services + beamline_services
 
-    if not args.services and not args.dev:
+    if not args.services and not args.dev and not args.test:
         for service in all_services:
             start_service(service, dev_mode=False)
         return
 
     dev_services = args.dev
+    test_services = args.test
     verbose = args.verbose
+    ignore_override = args.ignore_override
     for item in args.services:
         if item not in all_services:
             print(f"Error: Unknown service '{item}'", file=sys.stderr)
             print_available_services()
             sys.exit(1)
 
-        start_service(item, False, verbose)
+        start_service(item, verbose=verbose, ignore_override=ignore_override)
     for item in dev_services:
         if item not in all_services:
             print(f"Error: Unknown service '{item}'", file=sys.stderr)
             print_available_services()
             sys.exit(1)
-        start_service(item, True, verbose)
+        start_service(item, dev_mode=True, verbose=verbose, ignore_override=ignore_override)
+    for item in test_services:
+        if item not in all_services:
+            print(f"Error: Unknown service '{item}'", file=sys.stderr)
+            print_available_services()
+            sys.exit(1)
+        start_service(item, test_mode=True, verbose=verbose, ignore_override=ignore_override)
 
 
 def cmd_restart(args):
     stop_args = copy(args)
     stop_args.services += getattr(args, "dev", [])
+    stop_args.services += getattr(args, "test", [])
     print(f"Restarting {stop_args.services}")
 
     cmd_stop(stop_args)
@@ -202,8 +221,11 @@ def main():
         help="Services to start (use --dev before service name for dev mode)",
     )
     start_parser.add_argument(
-        "--dev", nargs="*", help="Start services in development mode", default=[]
+        "--dev", nargs="*", help="Services to start in development mode", default=[]
     )
+    start_parser.add_argument("--test", nargs="*", help="Services to start in test mode", default=[])
+    start_parser.add_argument("--hold", action="store_true", help="Do not run any command, but hold all services after starting")
+    start_parser.add_argument("--ignore-override", action="store_true", help="Ignore override files")
     start_parser.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose output"
     )
