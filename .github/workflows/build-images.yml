@@ -18,13 +18,13 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      uses: docker/setup-buildx-action@v4
 
     - name: Log in to Container Registry
-      uses: docker/login-action@v3
+      uses: docker/login-action@v4
       with:
         registry: ${{ env.REGISTRY }}
         username: ${{ github.actor }}
@@ -32,7 +32,7 @@ jobs:
 
     - name: Docker meta for bluesky
       id: meta-bluesky
-      uses: docker/metadata-action@v5
+      uses: docker/metadata-action@v6
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/bluesky
         tags: |
@@ -44,7 +44,7 @@ jobs:
           type=sha
 
     - name: Build and push bluesky image
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v7
       with:
         context: .
         file: ./images/bluesky/Containerfile
@@ -56,7 +56,7 @@ jobs:
 
     - name: Docker meta for queueserver
       id: meta-queueserver
-      uses: docker/metadata-action@v5
+      uses: docker/metadata-action@v6
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/queueserver
         tags: |
@@ -68,7 +68,7 @@ jobs:
           type=sha
 
     - name: Build and push queueserver image
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v7
       with:
         context: .
         file: ./images/queueserver/Containerfile
@@ -82,7 +82,7 @@ jobs:
 
     - name: Docker meta for gui
       id: meta-gui
-      uses: docker/metadata-action@v5
+      uses: docker/metadata-action@v6
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/gui
         tags: |
@@ -94,7 +94,7 @@ jobs:
           type=sha
 
     - name: Build and push gui image
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v7
       with:
         context: .
         file: ./images/gui/Containerfile
@@ -108,7 +108,7 @@ jobs:
 
     - name: Docker meta for viewer
       id: meta-viewer
-      uses: docker/metadata-action@v5
+      uses: docker/metadata-action@v6
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/viewer
         tags: |
@@ -120,7 +120,7 @@ jobs:
           type=sha
 
     - name: Build and push viewer image
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v7
       with:
         context: .
         file: ./images/viewer/Containerfile
@@ -134,7 +134,7 @@ jobs:
 
     - name: Docker meta for sim
       id: meta-sim
-      uses: docker/metadata-action@v5
+      uses: docker/metadata-action@v6
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/sim
         tags: |
@@ -146,7 +146,7 @@ jobs:
           type=sha
 
     - name: Build and push sim image
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v7
       with:
         context: .
         file: ./images/sim/Containerfile
