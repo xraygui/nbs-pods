@@ -12,8 +12,8 @@ services:
       - QT_QPA_PLATFORM=xcb
       - IPYTHONDIR=/usr/local/share/ipython
       - EPICS_CA_AUTO_ADDR_LIST=YES
-      - QSERVER_ZMQ_INFO_ADDRESS=tcp://acq_qs:60625
-      - QSERVER_ZMQ_CONTROL_ADDRESS=tcp://acq_qs:60615
+      - QSERVER_ZMQ_INFO_ADDRESS=tcp://queueserver:60625
+      - QSERVER_ZMQ_CONTROL_ADDRESS=tcp://queueserver:60615
       - NBS_SIM_MODE=1
     command: pixi run gui
     dns:

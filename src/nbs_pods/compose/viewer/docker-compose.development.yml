@@ -3,5 +3,3 @@ services:
     volumes:
       - ${NBSDIR}:/usr/local/src/xraygui
       - ${BEAMLINE_PODS_DIR}/config/ipython:/usr/local/share/ipython
-    command: >
-      bash -c "tail -f /dev/null &&  pixi run viewer-dev"
