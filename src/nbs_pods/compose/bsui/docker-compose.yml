@@ -5,7 +5,7 @@ networks:
     external: true
 
 services:
-  acq_bsui:
+  main:
     image: ${NBS_IMAGE_REG:-ghcr.io/xraygui/nbs-pods/}bluesky:latest
     volumes:
       - ${NBS_PODS_DIR}/config/tiled/profiles:/etc/tiled/profiles

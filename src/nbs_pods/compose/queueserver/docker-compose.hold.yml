@@ -1,3 +1,3 @@
 services:
-  acq_qs:
+  main:
     command: tail -f /dev/null

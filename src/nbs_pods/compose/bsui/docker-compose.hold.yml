@@ -1,3 +1,3 @@
 services:
-  acq_bsui:
+  main:
     command: tail -f /dev/null

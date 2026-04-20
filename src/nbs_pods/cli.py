@@ -73,10 +73,12 @@ def start_service(service, dev_mode=False, test_mode=False, hold_mode=False, ign
     env = setup_environment()
     env["COMPOSE_FILE"] = compose_file_string
 
-    result = subprocess.run(
-        ["podman-compose", "up", "-d"],
-        env=env,
-    )
+    command = ["podman-compose", "up"]
+    if not test_mode:
+        command.append("-d")
+    else:
+        command.append("--abort-on-container-exit")
+    result = subprocess.run(command, env=env)
 
     if result.returncode != 0:
         sys.exit(result.returncode)

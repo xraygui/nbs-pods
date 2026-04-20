@@ -5,7 +5,7 @@ networks:
     external: true
 
 services:
-  nbs-sim:
+  main:
     image: ${NBS_IMAGE_REG:-ghcr.io/xraygui/nbs-pods/}sim:latest
     command: pixi run sim
     dns:

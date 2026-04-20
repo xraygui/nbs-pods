@@ -1,5 +1,5 @@
 services:
-  nbs-sim:
+  main:
     volumes:
       - ${NBSDIR}:/usr/local/src/xraygui
       - ${BEAMLINE_PODS_DIR}/config/ipython:/usr/local/share/ipython
