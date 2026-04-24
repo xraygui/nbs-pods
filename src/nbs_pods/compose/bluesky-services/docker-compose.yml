@@ -82,6 +82,7 @@ services:
     command: tiled serve config /etc/tiled/config --host 0.0.0.0
     volumes:
       - ${NBS_PODS_DIR}/config/tiled/config:/etc/tiled/config
+      - /tmp/proposals:/nsls2/data/sst/proposals
     ports:
       - "8000:8000"
     networks:

@@ -13,6 +13,8 @@ services:
       - NBS_SIM_MODE=1
       - QS_REDIS_ADDR=redis
     command: pixi run qs
+    volumes:
+      - /tmp/proposals:/nsls2/data/sst/proposals
     dns:
       - 10.89.0.1
     networks:
