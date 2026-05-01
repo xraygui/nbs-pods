@@ -12,11 +12,6 @@ volumes:
 
 
 services:
-  mongo:
-    image: docker.io/mongo:latest
-    networks:
-      - bluesky
-
   zmq_proxy:
     image: ${NBS_IMAGE_REG:-ghcr.io/xraygui/nbs-pods/}queueserver:latest
     command: pixi run -e qs bluesky-0MQ-proxy 4567 5678
@@ -40,10 +35,9 @@ services:
       - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
       - KAFKA_CFG_LISTENERS=PLAINTEXT://:29092,PLAINTEXT_HOST://:9092,CONTROLLER://:9093
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:29092,PLAINTEXT_HOST://kafka:9092
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
       - KAFKA_CFG_MESSAGE_MAX_BYTES=1048588
     volumes:
@@ -74,16 +68,5 @@ services:
   redisInfo:
     image: docker.io/redis
     command: redis-server --port 60737
-    networks:
-      - bluesky
-
-  tiled_server:
-    image: ghcr.io/bluesky/databroker:v2.0.0b65
-    command: tiled serve config /etc/tiled/config --host 0.0.0.0
-    volumes:
-      - ${NBS_PODS_DIR}/config/tiled/config:/etc/tiled/config
-      - /tmp/proposals:/nsls2/data/sst/proposals
-    ports:
-      - "8000:8000"
     networks:
       - bluesky

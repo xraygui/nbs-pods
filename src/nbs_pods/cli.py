@@ -6,7 +6,7 @@ import subprocess
 import sys
 from copy import copy
 
-from nbs_pods.compose import build_compose_file_string
+from nbs_pods.compose import build_compose_file_string, get_service_variants
 from nbs_pods.config import get_beamline_pods_dir, get_nbs_pods_dir
 from nbs_pods.services import get_all_services, discover_gui_services
 
@@ -39,6 +39,9 @@ def start_service(service, dev_mode=False, test_mode=False, hold_mode=False, ign
     print(f"Starting {service}{mode_str}...", flush=True)
 
     override_keys = []
+    variant_keys = get_service_variants(service)
+    if len(variant_keys) > 0:
+        override_keys.extend(variant_keys)
     if not ignore_override:
         override_keys.append("override")
     if dev_mode:

@@ -1,0 +1,66 @@
+services:
+  tiled_server:
+    image: ghcr.io/bluesky/tiled:0.2.9
+    environment:
+      - TILED_SINGLE_USER_API_KEY=${TILED_SINGLE_USER_API_KEY}
+      - TILED_CATALOG_URI=postgresql://tiled:${POSTGRES_PASSWORD}@postgres:5432/tiled_catalog
+      - TILED_CATALOG_WRITABLE_STORAGE=["file:///storage", "postgresql://tiled:${POSTGRES_PASSWORD}@postgres:5432/tiled_storage"]
+      - TILED_STREAMING_CACHE_URI=redis://:${REDIS_PASSWORD}@redisTiled:6379
+    volumes:
+      - tiled_data:/storage
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redisTiled:
+        condition: service_healthy
+    networks:
+      - bluesky
+    healthcheck:
+      test: curl --fail http://localhost:8000/healthz || exit 1
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    command: tiled serve catalog --host 0.0.0.0
+
+  postgres:
+    image: docker.io/postgres:16
+    environment:
+      - POSTGRES_USER=tiled
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ${NBS_PODS_DIR}/compose/bluesky-services/initdb:/docker-entrypoint-initdb.d
+    restart: unless-stopped
+    networks:
+      - bluesky
+    healthcheck:
+      test: pg_isready -U tiled -d postgres
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  redisTiled:
+    image: docker.io/redis:7-alpine
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - bluesky
+    healthcheck:
+      test: redis-cli -a ${REDIS_PASSWORD} ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+volumes:
+  postgres_data:
+  redis_data:
+  tiled_data:

@@ -1,0 +1,2 @@
+[bluesky-services]
+variants = ["mongo"]

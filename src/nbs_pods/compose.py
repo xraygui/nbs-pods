@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from nbs_pods.config import get_beamline_pods_dir, get_nbs_pods_dir
+from nbs_pods.config import get_beamline_pods_config, get_beamline_pods_dir, get_nbs_pods_dir
 from nbs_pods.display import detect_display_protocol
 
 
@@ -99,6 +99,29 @@ def get_compose_override(service, key="override",verbose=False):
         return nbs_file
 
     return None
+
+
+def get_service_variants(service):
+    """
+    Get variant keys for a service from the merged pods configuration.
+
+    Reads ``compose/pods.toml`` from nbs-pods (default) merged with the
+    beamline ``compose/pods.toml`` (override).  Returns an empty list for
+    any service that has no ``variants`` entry, so only ``bluesky-services``
+    (or other explicitly configured services) will have variants stacked.
+
+    Parameters
+    ----------
+    service : str
+        Service name (e.g. ``"bluesky-services"``).
+
+    Returns
+    -------
+    list[str]
+        Ordered list of variant keys to stack after the base compose file.
+    """
+    config = get_beamline_pods_config()
+    return config.get(service, {}).get("variants", [])
 
 
 def build_compose_file_string(service, verbose=False, gui_services=["gui", "viewer"], override_keys=["override"]):

@@ -3,6 +3,14 @@
 import os
 from pathlib import Path
 
+try:
+    import tomllib
+except ImportError:
+    try:
+        import tomli as tomllib
+    except ImportError:
+        tomllib = None
+
 
 def get_nbs_pods_dir():
     """
@@ -40,6 +48,56 @@ def get_beamline_pods_dir():
         return Path(beamline_pods_dir).resolve()
 
     return get_nbs_pods_dir()
+
+
+def _load_pods_toml(path):
+    """
+    Load a pods.toml file, returning an empty dict on failure.
+
+    Parameters
+    ----------
+    path : Path
+        Path to the TOML file.
+
+    Returns
+    -------
+    dict
+    """
+    if tomllib is None or not path.exists():
+        return {}
+    with open(path, "rb") as f:
+        return tomllib.load(f)
+
+
+def get_beamline_pods_config():
+    """
+    Get the merged pods configuration for the current beamline.
+
+    Loads ``compose/pods.toml`` from the nbs-pods package directory as the
+    base, then deep-merges any ``compose/pods.toml`` found in the beamline
+    pods directory on top.  Beamline values take precedence.
+
+    Returns
+    -------
+    dict
+        Merged configuration dictionary.
+    """
+    nbs_config = _load_pods_toml(get_nbs_pods_dir() / "compose" / "pods.toml")
+
+    beamline_pods_dir = get_beamline_pods_dir()
+    if beamline_pods_dir == get_nbs_pods_dir():
+        return nbs_config
+
+    beamline_config = _load_pods_toml(beamline_pods_dir / "compose" / "pods.toml")
+
+    merged = dict(nbs_config)
+    for service, service_cfg in beamline_config.items():
+        if service in merged and isinstance(merged[service], dict):
+            merged[service] = {**merged[service], **service_cfg}
+        else:
+            merged[service] = service_cfg
+
+    return merged
 
 
 def get_beamline_name():
