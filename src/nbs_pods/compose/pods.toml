@@ -1,2 +1,4 @@
+demo_services = ["bluesky-services", "gui", "queueserver", "sim", "viewer"]
+
 [bluesky-services]
 variants = ["mongo"]

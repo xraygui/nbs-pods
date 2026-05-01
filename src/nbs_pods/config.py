@@ -100,6 +100,22 @@ def get_beamline_pods_config():
     return merged
 
 
+def get_demo_services():
+    """
+    Get the list of services started by ``nbs-pods demo``.
+
+    Reads ``demo_services`` from the merged pods configuration.  Beamlines
+    can override this in their own ``compose/pods.toml``.
+
+    Returns
+    -------
+    list[str]
+        Ordered list of service names.
+    """
+    config = get_beamline_pods_config()
+    return config.get("demo_services", ["bluesky-services", "gui", "queueserver", "sim", "viewer"])
+
+
 def get_beamline_name():
     """
     Get the beamline name.
