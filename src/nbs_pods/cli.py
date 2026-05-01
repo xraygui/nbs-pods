@@ -6,8 +6,8 @@ import subprocess
 import sys
 from copy import copy
 
-from nbs_pods.compose import build_compose_file_string
-from nbs_pods.config import get_beamline_pods_dir, get_nbs_pods_dir
+from nbs_pods.compose import build_compose_file_string, get_service_variants
+from nbs_pods.config import get_beamline_pods_dir, get_demo_services, get_nbs_pods_dir
 from nbs_pods.services import get_all_services, discover_gui_services
 
 gui_services = discover_gui_services()
@@ -23,6 +23,22 @@ def setup_environment(beamline_pods_dir=None):
         env["BEAMLINE_PODS_DIR"] = get_beamline_pods_dir()
     return env
 
+def print_compose_files(compose_file_string, override_keys):
+    compose_files = compose_file_string.split(":")
+    print("  Using compose files:")
+    labels = ["(base)"]
+    for compose_file in compose_files[1:]:
+        compose_name = os.path.basename(compose_file)
+        label = ""
+        for key in override_keys:
+            if compose_name == f"docker-compose.{key}.yml":
+                label = f"({key})"
+                break
+        labels.append(label)
+
+    for i, compose_file in enumerate(compose_files):
+        label = labels[i] if i < len(labels) else ""
+        print(f"    - {compose_file} {label}", flush=True)
 
 def start_service(service, dev_mode=False, test_mode=False, hold_mode=False, ignore_override=False, verbose=False):
     """
@@ -39,6 +55,9 @@ def start_service(service, dev_mode=False, test_mode=False, hold_mode=False, ign
     print(f"Starting {service}{mode_str}...", flush=True)
 
     override_keys = []
+    variant_keys = get_service_variants(service)
+    if len(variant_keys) > 0:
+        override_keys.extend(variant_keys)
     if not ignore_override:
         override_keys.append("override")
     if dev_mode:
@@ -54,21 +73,7 @@ def start_service(service, dev_mode=False, test_mode=False, hold_mode=False, ign
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
 
-    compose_files = compose_file_string.split(":")
-    print("  Using compose files:")
-    labels = ["(base)"]
-    for compose_file in compose_files[1:]:
-        compose_name = os.path.basename(compose_file)
-        label = ""
-        for key in override_keys:
-            if compose_name == f"docker-compose.{key}.yml":
-                label = f"({key})"
-                break
-        labels.append(label)
-
-    for i, compose_file in enumerate(compose_files):
-        label = labels[i] if i < len(labels) else ""
-        print(f"    - {compose_file} {label}", flush=True)
+    print_compose_files(compose_file_string, override_keys)
 
     env = setup_environment()
     env["COMPOSE_FILE"] = compose_file_string
@@ -97,19 +102,20 @@ def stop_service(service, verbose=False):
     """
     print(f"Stopping {service}...", flush=True)
 
+    override_keys = []
+    variant_keys = get_service_variants(service)
+    if len(variant_keys) > 0:
+        override_keys.extend(variant_keys)
+
     try:
         compose_file_string = build_compose_file_string(
-            service, verbose=verbose, gui_services=gui_services
+            service, verbose=verbose, gui_services=gui_services, override_keys=override_keys
         )
     except RuntimeError as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
 
-    compose_files = compose_file_string.split(":")
-    if len(compose_files) > 1:
-        compose_file_string = ":".join(compose_files[:2])
-    else:
-        compose_file_string = compose_files[0]
+    print_compose_files(compose_file_string, override_keys)
 
     env = setup_environment()
     env["COMPOSE_FILE"] = compose_file_string
@@ -191,8 +197,9 @@ def cmd_stop(args):
 
 def cmd_demo(args):
     """Handle demo command."""
-    demo_services = ["bluesky-services", "gui", "queueserver", "sim", "viewer"]
-    for service in demo_services:
+    services = get_demo_services()
+    print(f"Starting demo services: {services}")
+    for service in services:
         start_service(service, dev_mode=False)
 
 
