@@ -7,7 +7,7 @@ import sys
 from copy import copy
 
 from nbs_pods.compose import build_compose_file_string, get_service_variants
-from nbs_pods.config import get_beamline_pods_dir, get_demo_services, get_nbs_pods_dir
+from nbs_pods.config import get_beamline_pods_dir, get_demo_services, get_nbs_pods_dir, get_presets
 from nbs_pods.services import get_all_services, discover_gui_services
 
 gui_services = discover_gui_services()
@@ -221,6 +221,84 @@ def print_available_services():
             print(f"  - {service}")
 
 
+def parse_preset_services(service_list):
+    """
+    Split a preset service list into normal, dev, and test service groups.
+
+    Tokens ``--dev``, ``--test``, and ``--normal`` act as mode toggles;
+    all subsequent service names are assigned to the active mode.
+
+    Parameters
+    ----------
+    service_list : list[str]
+        Mixed list of service names and mode-toggle flags.
+
+    Returns
+    -------
+    services : list[str]
+    dev_services : list[str]
+    test_services : list[str]
+    """
+    services = []
+    dev_services = []
+    test_services = []
+    mode = "normal"
+    for item in service_list:
+        if item == "--dev":
+            mode = "dev"
+        elif item == "--test":
+            mode = "test"
+        elif item == "--normal":
+            mode = "normal"
+        elif mode == "dev":
+            dev_services.append(item)
+        elif mode == "test":
+            test_services.append(item)
+        else:
+            services.append(item)
+    return services, dev_services, test_services
+
+
+def make_cmd_preset(preset_name):
+    """
+    Return a command handler that starts the named preset.
+
+    Parameters
+    ----------
+    preset_name : str
+        Key in the ``[presets]`` table of ``pods.toml``.
+
+    Returns
+    -------
+    callable
+        Argparse command handler accepting an ``args`` namespace.
+    """
+    def cmd_preset(args):
+        presets = get_presets()
+        service_list = presets[preset_name]
+        services, dev_services, test_services = parse_preset_services(service_list)
+        verbose = getattr(args, "verbose", False)
+        print(f"Running preset '{preset_name}'...")
+        for service in services:
+            start_service(service, verbose=verbose)
+        for service in dev_services:
+            start_service(service, dev_mode=True, verbose=verbose)
+        for service in test_services:
+            start_service(service, test_mode=True, verbose=verbose)
+    return cmd_preset
+
+
+def cmd_list_presets(args):
+    """Handle presets command — list available presets."""
+    presets = get_presets()
+    if not presets:
+        print("No presets defined.")
+        return
+    print("Available presets:")
+    for name, service_list in presets.items():
+        print(f"  {name}: {service_list}")
+
+
 def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(
@@ -272,11 +350,23 @@ def main():
     )
     stop_parser.set_defaults(func=cmd_stop)
 
-    demo_parser = subparsers.add_parser("demo", help="Start demo services")
-    demo_parser.set_defaults(func=cmd_demo)
+    #demo_parser = subparsers.add_parser("demo", help="Start demo services")
+    #demo_parser.set_defaults(func=cmd_demo)
 
     list_parser = subparsers.add_parser("list", help="List available services")
     list_parser.set_defaults(func=cmd_list)
+
+    presets_parser = subparsers.add_parser("presets", help="List available presets")
+    presets_parser.set_defaults(func=cmd_list_presets)
+
+    for preset_name, service_list in get_presets().items():
+        preset_parser = subparsers.add_parser(
+            preset_name, help=f"Run preset '{preset_name}': {service_list}"
+        )
+        preset_parser.add_argument(
+            "-v", "--verbose", action="store_true", help="Verbose output"
+        )
+        preset_parser.set_defaults(func=make_cmd_preset(preset_name))
 
     args = parser.parse_args()
 

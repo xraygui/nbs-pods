@@ -100,6 +100,22 @@ def get_beamline_pods_config():
     return merged
 
 
+def get_presets():
+    """
+    Get the presets dictionary from the merged pods configuration.
+
+    Each key is a preset name and each value is a list of service tokens,
+    where ``--dev`` and ``--test`` act as mode toggles for subsequent entries.
+
+    Returns
+    -------
+    dict
+        Mapping of preset name to list of service tokens.
+    """
+    config = get_beamline_pods_config()
+    return config.get("presets", {})
+
+
 def get_demo_services():
     """
     Get the list of services started by ``nbs-pods demo``.
