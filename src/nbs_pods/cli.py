@@ -86,6 +86,10 @@ def start_service(service, dev_mode=False, test_mode=False, hold_mode=False, ign
         command.extend(["--exit-code-from", service])
     result = subprocess.run(command, env=env)
 
+    if test_mode:
+        print(f"Tearing down {service} after test...", flush=True)
+        subprocess.run(["podman-compose", "down", "-v"], env=env)
+
     if result.returncode != 0:
         sys.exit(result.returncode)
     return result
