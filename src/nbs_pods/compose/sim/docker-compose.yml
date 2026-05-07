@@ -6,7 +6,7 @@ networks:
 
 services:
   sim:
-    image: ${NBS_IMAGE_REG:-ghcr.io/xraygui/nbs-pods/}sim:latest
+    image: ${NBS_IMAGE_REG:-ghcr.io/xraygui/nbs-pods/}sim:${NBS_IMAGE_TAG:-latest}
     command: pixi run sim
     dns:
       - 10.89.0.1

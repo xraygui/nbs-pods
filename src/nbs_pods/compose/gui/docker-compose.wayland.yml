@@ -4,7 +4,7 @@ networks:
     external: true
 services:
   gui:
-    image: ${NBS_IMAGE_REG:-ghcr.io/xraygui/nbs-pods/}gui:latest
+    image: ${NBS_IMAGE_REG:-ghcr.io/xraygui/nbs-pods/}gui:${NBS_IMAGE_TAG:-latest}
     volumes:
       - /run/user/${HOST_UID}:/run/user/${HOST_UID}
     devices:

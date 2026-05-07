@@ -13,13 +13,13 @@ volumes:
 
 services:
   zmq_proxy:
-    image: ${NBS_IMAGE_REG:-ghcr.io/xraygui/nbs-pods/}queueserver:latest
+    image: ${NBS_IMAGE_REG:-ghcr.io/xraygui/nbs-pods/}queueserver:${NBS_IMAGE_TAG:-latest}
     command: pixi run -e qs bluesky-0MQ-proxy 4567 5678
     networks:
       - bluesky
 
   zmq_proxy2:
-    image: ${NBS_IMAGE_REG:-ghcr.io/xraygui/nbs-pods/}queueserver:latest
+    image: ${NBS_IMAGE_REG:-ghcr.io/xraygui/nbs-pods/}queueserver:${NBS_IMAGE_TAG:-latest}
     command: pixi run -e qs bluesky-0MQ-proxy 5577 5578
     networks:
       - bluesky
