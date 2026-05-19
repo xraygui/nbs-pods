@@ -10,6 +10,7 @@ services:
     environment:
       - IPYTHONDIR=/usr/local/share/ipython
       - EPICS_CA_AUTO_ADDR_LIST=yes
+      - TILED_SINGLE_USER_API_KEY=${TILED_SINGLE_USER_API_KEY}
       - NBS_SIM_MODE=1
       - QS_REDIS_ADDR=redis
     command: pixi run qs
