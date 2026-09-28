@@ -24,8 +24,8 @@ catalog:
   specs: [{"name": "CatalogOfBlueskyRuns", "version": "3.0"}]
   readable_storage:
     - /nsls2/data/sst/proposals
-# routers:
-#  - bluesky_tiled_plugins.routers.validator:router
+routers:
+  - bluesky_tiled_plugins.routers.validator:router
 
 streaming_cache:
   uri: redis://:${REDIS_PASSWORD}@localhost:6379
