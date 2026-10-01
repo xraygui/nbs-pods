@@ -75,11 +75,13 @@ Use `workflow_dispatch` on the retag workflow only for recovery (for example, re
 | [promote-build-to-latest.yml](workflows/promote-build-to-latest.yml) | Push to `master`, or manual | Retag `:build` → `:latest` |
 | [retag-release.yml](workflows/retag-release.yml) | Tag `v*`, or manual | Promote `:latest` → `:VERSION` and `:MAJOR.MINOR` |
 | [python-publish.yml](workflows/python-publish.yml) | GitHub Release published | Build and upload the Python package to PyPI |
-| [profile-test.yml](workflows/profile-test.yml) | PR (uses `:build`), push to `master`/`main` (uses `:latest`), or manual | Start sim stack and run profile pytest via queueserver `--test` |
+| [profile-test.yml](workflows/profile-test.yml) | PR (uses `:build`), push to `master`/`main` (uses `:latest`), or manual | Create a throwaway child pods package, start sim stack via the child CLI, and run profile pytest via queueserver `--test` |
 
 ## Testing
 
 Profile tests live under `src/nbs_pods/config/ipython/profile_default/tests/` and run inside IPython after the demo profile starts.
+
+CI also exercises child-repo creation: it runs `nbs-pods-create`, rewrites the child's `nbs-pods` dependency to the checked-out tree, `pixi install`s the child, and drives the same start/`--test` smoke through the child's CLI (without `--dev`, so the image-baked profile is used).
 
 ### Local images
 
