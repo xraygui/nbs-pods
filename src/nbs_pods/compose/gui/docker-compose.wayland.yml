@@ -19,7 +19,7 @@ services:
       - QSERVER_ZMQ_INFO_ADDRESS=tcp://queueserver:60625
       - QSERVER_ZMQ_CONTROL_ADDRESS=tcp://queueserver:60615
       - NBS_SIM_MODE=1
-    command: pixi run gui
+    command: pixi run ${NBS_PIXI_TASK:-gui}
     dns:
       - 10.89.0.1
     networks:

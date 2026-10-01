@@ -7,7 +7,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build:
@@ -19,6 +18,10 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v6
+
+    - name: Set IMAGE_NAME for GHCR
+      shell: bash
+      run: echo "IMAGE_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_ENV"
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v4
@@ -36,10 +39,7 @@ jobs:
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/bluesky
         tags: |
-          type=raw,value=latest
-          type=ref,event=branch
-          type=ref,event=pr
-          type=sha
+          type=raw,value=build
 
     - name: Build and push bluesky image
       uses: docker/build-push-action@v7
@@ -58,12 +58,7 @@ jobs:
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/queueserver
         tags: |
-          type=raw,value=latest
-          type=ref,event=branch
-          type=ref,event=pr
-          type=semver,pattern={{version}}
-          type=semver,pattern={{major}}.{{minor}}
-          type=sha
+          type=raw,value=build
 
     - name: Build and push queueserver image
       uses: docker/build-push-action@v7
@@ -74,7 +69,7 @@ jobs:
         tags: ${{ steps.meta-queueserver.outputs.tags }}
         labels: ${{ steps.meta-queueserver.outputs.labels }}
         build-args: |
-          BASE_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/bluesky:latest
+          BASE_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/bluesky:build
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
@@ -84,12 +79,7 @@ jobs:
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/gui
         tags: |
-          type=raw,value=latest
-          type=ref,event=branch
-          type=ref,event=pr
-          type=semver,pattern={{version}}
-          type=semver,pattern={{major}}.{{minor}}
-          type=sha
+          type=raw,value=build
 
     - name: Build and push gui image
       uses: docker/build-push-action@v7
@@ -100,7 +90,7 @@ jobs:
         tags: ${{ steps.meta-gui.outputs.tags }}
         labels: ${{ steps.meta-gui.outputs.labels }}
         build-args: |
-          BASE_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/bluesky:latest
+          BASE_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/bluesky:build
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
@@ -110,12 +100,7 @@ jobs:
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/viewer
         tags: |
-          type=raw,value=latest
-          type=ref,event=branch
-          type=ref,event=pr
-          type=semver,pattern={{version}}
-          type=semver,pattern={{major}}.{{minor}}
-          type=sha
+          type=raw,value=build
 
     - name: Build and push viewer image
       uses: docker/build-push-action@v7
@@ -126,7 +111,7 @@ jobs:
         tags: ${{ steps.meta-viewer.outputs.tags }}
         labels: ${{ steps.meta-viewer.outputs.labels }}
         build-args: |
-          BASE_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/bluesky:latest
+          BASE_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/bluesky:build
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
@@ -136,12 +121,7 @@ jobs:
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/sim
         tags: |
-          type=raw,value=latest
-          type=ref,event=branch
-          type=ref,event=pr
-          type=semver,pattern={{version}}
-          type=semver,pattern={{major}}.{{minor}}
-          type=sha
+          type=raw,value=build
 
     - name: Build and push sim image
       uses: docker/build-push-action@v7
@@ -152,6 +132,6 @@ jobs:
         tags: ${{ steps.meta-sim.outputs.tags }}
         labels: ${{ steps.meta-sim.outputs.labels }}
         build-args: |
-          BASE_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/bluesky:latest
+          BASE_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/bluesky:build
         cache-from: type=gha
         cache-to: type=gha,mode=max

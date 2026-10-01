@@ -1,50 +1,71 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-set -e
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-NBS_PODS_DIR="$(dirname "$SCRIPT_DIR")"
+cd -- "${ROOT_DIR}"
 
-# Define available images
+COMPOSE_FILE="${ROOT_DIR}/docker-compose.build.yml"
+PODMAN_BUILD_ARGS="--ulimit nofile=65536:65536"
+
 IMAGES=(
-    "conda"
-    "bluesky"
-    "nbs"
+  bluesky
+  queueserver
+  gui
+  viewer
+  sim
 )
 
-build_image() {
-    local image=$1
-    echo "Building $image..."
-    bash "$NBS_PODS_DIR/images/$image/build_${image}_image.sh"
-}
-
-build_all_images() {
-    for image in "${IMAGES[@]}"; do
-        build_image "$image"
-    done
-}
-
 usage() {
-    echo "Usage: $0 [image1 image2 ...]"
-    echo "If no images are specified, all will be built."
-    echo ""
-    echo "Available images:"
-    for image in "${IMAGES[@]}"; do
-        echo "  - $image"
-    done
-    exit 1
+  echo "Usage: $0 [image ...]"
+  echo "Build local nbs-pods images tagged as localhost/nbs-<name>:latest."
+  echo ""
+  echo "Images are built one at a time. Parallel builds from the same base"
+  echo "image often fail in podman when committing large pixi layers."
+  echo ""
+  echo "If no images are specified, all are built (bluesky first)."
+  echo ""
+  echo "Available images:"
+  for image in "${IMAGES[@]}"; do
+    echo "  - ${image}"
+  done
 }
 
-# Main execution
-if [ $# -eq 0 ]; then
-    build_all_images
-else
-    for image in "$@"; do
-        if [[ ! " ${IMAGES[@]} " =~ " ${image} " ]]; then
-            echo "Error: Unknown image '$image'"
-            echo ""
-            usage
-        fi
-        build_image "$image"
-    done
-fi 
+build_one() {
+  local image=$1
+  echo "Building ${image}..."
+  podman-compose --podman-build-args="${PODMAN_BUILD_ARGS}" -f "${COMPOSE_FILE}" build "${image}"
+}
+
+if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+  usage
+  exit 0
+fi
+
+if [[ $# -eq 0 ]]; then
+  for image in "${IMAGES[@]}"; do
+    build_one "${image}"
+  done
+  exit 0
+fi
+
+for image in "$@"; do
+  found=0
+  for known in "${IMAGES[@]}"; do
+    if [[ "${image}" == "${known}" ]]; then
+      found=1
+      break
+    fi
+  done
+  if [[ "${found}" -eq 0 ]]; then
+    echo "Error: Unknown image '${image}'" >&2
+    echo "" >&2
+    usage >&2
+    exit 1
+  fi
+done
+
+for image in "$@"; do
+  build_one "${image}"
+done

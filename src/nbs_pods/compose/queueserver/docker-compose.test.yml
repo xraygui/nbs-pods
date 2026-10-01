@@ -1,0 +1,6 @@
+services:
+  queueserver:
+    volumes:
+      - ${NBS_PODS_DIR}/config/ipython/profile_default/tests:/usr/local/share/ipython/profile_default/tests:ro
+    environment:
+      - NBS_SIM_MODE=1

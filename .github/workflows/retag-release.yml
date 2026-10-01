@@ -56,7 +56,7 @@ jobs:
         VERSION="${{ steps.version.outputs.version }}"
         MAJOR_MINOR="${{ steps.version.outputs.major_minor }}"
 
-        for image in bluesky queueserver gui sim; do
+        for image in bluesky queueserver gui viewer sim; do
           docker buildx imagetools create \
             --tag "${REPO}/${image}:${VERSION}" \
             --tag "${REPO}/${image}:${MAJOR_MINOR}" \

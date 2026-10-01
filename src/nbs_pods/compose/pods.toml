@@ -1,5 +1,6 @@
 [presets]
 demo = ["bluesky-services", "gui", "queueserver", "sim", "viewer"]
+test = ["bluesky-services", "sim", "--test", "queueserver"]
 
 [bluesky-services]
 variants = ["mongo"]

@@ -7,21 +7,126 @@ import sys
 from copy import copy
 
 from nbs_pods.compose import build_compose_file_string, get_service_variants
-from nbs_pods.config import get_beamline_pods_dir, get_demo_services, get_nbs_pods_dir, get_presets
+from nbs_pods.config import (
+    LOCAL_IMAGE_REG,
+    get_beamline_pods_dir,
+    get_demo_services,
+    get_nbs_pods_dir,
+    get_presets,
+)
 from nbs_pods.services import get_all_services, discover_gui_services
 
 gui_services = discover_gui_services()
 
+DEFAULT_TEST_TASKS = {
+    "queueserver": "qs-pytest",
+}
+
+
 def setup_environment(beamline_pods_dir=None):
-    """Setup environment variables."""
+    """
+    Setup environment variables for podman-compose.
+
+    Parameters
+    ----------
+    beamline_pods_dir : str or Path, optional
+        Override for ``BEAMLINE_PODS_DIR``.
+
+    Returns
+    -------
+    dict
+        Environment mapping for subprocess calls.
+    """
     env = os.environ.copy()
     env["HOST_UID"] = str(os.getuid())
     env["NBS_PODS_DIR"] = str(get_nbs_pods_dir())
     if beamline_pods_dir is not None:
         env["BEAMLINE_PODS_DIR"] = str(beamline_pods_dir)
     else:
-        env["BEAMLINE_PODS_DIR"] = get_beamline_pods_dir()
+        env["BEAMLINE_PODS_DIR"] = str(get_beamline_pods_dir())
     return env
+
+
+def apply_image_options(args):
+    """
+    Apply ``--local`` / ``--image-reg`` / ``--image-tag`` to the process env.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Parsed CLI arguments. Missing attributes are ignored.
+    """
+    if getattr(args, "local", False):
+        os.environ["NBS_IMAGE_REG"] = LOCAL_IMAGE_REG
+    image_reg = getattr(args, "image_reg", None)
+    if image_reg:
+        os.environ["NBS_IMAGE_REG"] = image_reg
+    image_tag = getattr(args, "image_tag", None)
+    if image_tag:
+        os.environ["NBS_IMAGE_TAG"] = image_tag
+    if os.environ.get("NBS_IMAGE_REG") or os.environ.get("NBS_IMAGE_TAG"):
+        print(
+            "Using images: "
+            f"{os.environ.get('NBS_IMAGE_REG', 'ghcr.io/xraygui/nbs-pods/')}"
+            f"<name>:{os.environ.get('NBS_IMAGE_TAG', 'latest')}",
+            flush=True,
+        )
+
+
+def add_image_option_args(parser):
+    """
+    Add shared image-selection flags to a parser.
+
+    Parameters
+    ----------
+    parser : argparse.ArgumentParser
+        Parser to extend.
+    """
+    parser.add_argument(
+        "--local",
+        action="store_true",
+        help=(
+            f"Use locally built images with prefix {LOCAL_IMAGE_REG} "
+            "(from pixi run build-images)"
+        ),
+    )
+    parser.add_argument(
+        "--image-reg",
+        metavar="PREFIX",
+        help="Override NBS_IMAGE_REG (image name prefix before the service name)",
+    )
+    parser.add_argument(
+        "--image-tag",
+        metavar="TAG",
+        help="Override NBS_IMAGE_TAG (default: latest)",
+    )
+
+
+def parse_service_token(token):
+    """
+    Parse a service token that may include a pixi task override.
+
+    Parameters
+    ----------
+    token : str
+        Either ``service`` or ``service=task``.
+
+    Returns
+    -------
+    service : str
+        Service name.
+    task : str or None
+        Pixi task name, or None to use the compose default.
+    """
+    if "=" not in token:
+        return token, None
+    service, task = token.split("=", 1)
+    if not service or not task:
+        raise ValueError(
+            f"Invalid service token '{token}'; expected SERVICE or SERVICE=TASK"
+        )
+    return service, task
+
 
 def print_compose_files(compose_file_string, override_keys):
     compose_files = compose_file_string.split(":")
@@ -40,18 +145,52 @@ def print_compose_files(compose_file_string, override_keys):
         label = labels[i] if i < len(labels) else ""
         print(f"    - {compose_file} {label}", flush=True)
 
-def start_service(service, dev_mode=False, test_mode=False, hold_mode=False, ignore_override=False, verbose=False):
+
+def start_service(
+    service,
+    dev_mode=False,
+    test_mode=False,
+    hold_mode=False,
+    ignore_override=False,
+    verbose=False,
+    task=None,
+    foreground=False,
+    teardown=False,
+):
     """
     Start a service using podman-compose.
 
     Parameters
     ----------
     service : str
-        Service name
+        Service name.
     dev_mode : bool
-        Whether to start in development mode
+        Stack ``docker-compose.development.yml`` (mounts only).
+    test_mode : bool
+        Stack ``docker-compose.test.yml`` and run in the foreground.
+    hold_mode : bool
+        Stack ``docker-compose.hold.yml``.
+    ignore_override : bool
+        Skip ``docker-compose.override.yml``.
+    verbose : bool
+        Print compose file resolution details.
+    task : str or None
+        Pixi task name exported as ``NBS_PIXI_TASK``.
+    foreground : bool
+        Run ``podman-compose up`` without ``-d``.
+    teardown : bool
+        After a foreground run, tear the service down.
     """
-    mode_str = " (dev mode)" if dev_mode else ""
+    parts = []
+    if dev_mode:
+        parts.append("dev mounts")
+    if test_mode:
+        parts.append("test")
+    if task:
+        parts.append(f"task={task}")
+    if foreground:
+        parts.append("foreground")
+    mode_str = f" ({', '.join(parts)})" if parts else ""
     print(f"Starting {service}{mode_str}...", flush=True)
 
     override_keys = []
@@ -68,7 +207,9 @@ def start_service(service, dev_mode=False, test_mode=False, hold_mode=False, ign
         override_keys.append("hold")
 
     try:
-        compose_file_string = build_compose_file_string(service, verbose, gui_services, override_keys)
+        compose_file_string = build_compose_file_string(
+            service, verbose, gui_services, override_keys
+        )
     except RuntimeError as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
@@ -77,17 +218,22 @@ def start_service(service, dev_mode=False, test_mode=False, hold_mode=False, ign
 
     env = setup_environment()
     env["COMPOSE_FILE"] = compose_file_string
+    if task:
+        env["NBS_PIXI_TASK"] = task
+    else:
+        env.pop("NBS_PIXI_TASK", None)
 
+    run_foreground = foreground or test_mode
     command = ["podman-compose", "up"]
-    if not test_mode:
+    if not run_foreground:
         command.append("-d")
     else:
         command.append("--abort-on-container-exit")
         command.extend(["--exit-code-from", service])
     result = subprocess.run(command, env=env)
 
-    if test_mode:
-        print(f"Tearing down {service} after test...", flush=True)
+    if teardown and run_foreground:
+        print(f"Tearing down {service}...", flush=True)
         subprocess.run(["podman-compose", "down", "-v"], env=env)
 
     if result.returncode != 0:
@@ -123,6 +269,7 @@ def stop_service(service, verbose=False):
 
     env = setup_environment()
     env["COMPOSE_FILE"] = compose_file_string
+    env.pop("NBS_PIXI_TASK", None)
 
     result = subprocess.run(
         ["podman-compose", "down", "-v"],
@@ -134,46 +281,93 @@ def stop_service(service, verbose=False):
     return result
 
 
+def _resolve_start_token(token, *, test_mode=False):
+    """
+    Resolve a CLI/preset token into a service name and pixi task.
+
+    Parameters
+    ----------
+    token : str
+        ``service`` or ``service=task``.
+    test_mode : bool
+        If True and no task is given, use ``DEFAULT_TEST_TASKS``.
+
+    Returns
+    -------
+    service : str
+    task : str or None
+    """
+    try:
+        service, task = parse_service_token(token)
+    except ValueError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+    if test_mode and task is None:
+        task = DEFAULT_TEST_TASKS.get(service)
+    return service, task
+
+
+def _ensure_known_service(service, all_services):
+    if service not in all_services:
+        print(f"Error: Unknown service '{service}'", file=sys.stderr)
+        print_available_services()
+        sys.exit(1)
+
+
 def cmd_start(args):
     """Handle start command."""
     base_services, beamline_services = get_all_services()
     all_services = base_services + beamline_services
+    dev_mode = bool(getattr(args, "dev", False))
 
-    if not args.services and not args.dev and not args.test:
+    if not args.services and not args.test:
         for service in all_services:
-            start_service(service, dev_mode=False)
+            start_service(service, dev_mode=dev_mode)
         return
 
-    dev_services = args.dev
-    test_services = args.test
     verbose = args.verbose
     hold_mode = args.hold
     ignore_override = args.ignore_override
-    for item in args.services:
-        if item not in all_services:
-            print(f"Error: Unknown service '{item}'", file=sys.stderr)
-            print_available_services()
-            sys.exit(1)
+    foreground = args.foreground
+    teardown = args.teardown
 
-        start_service(item, verbose=verbose, ignore_override=ignore_override, hold_mode=hold_mode)
-    for item in dev_services:
-        if item not in all_services:
-            print(f"Error: Unknown service '{item}'", file=sys.stderr)
-            print_available_services()
-            sys.exit(1)
-        start_service(item, dev_mode=True, verbose=verbose, ignore_override=ignore_override, hold_mode=hold_mode)
-    for item in test_services:
-        if item not in all_services:
-            print(f"Error: Unknown service '{item}'", file=sys.stderr)
-            print_available_services()
-            sys.exit(1)
-        start_service(item, test_mode=True, verbose=verbose, ignore_override=ignore_override, hold_mode=hold_mode)
+    for item in args.services:
+        service, task = _resolve_start_token(item)
+        _ensure_known_service(service, all_services)
+        start_service(
+            service,
+            dev_mode=dev_mode,
+            task=task,
+            verbose=verbose,
+            ignore_override=ignore_override,
+            hold_mode=hold_mode,
+            foreground=foreground,
+            teardown=teardown,
+        )
+    for item in args.test:
+        service, task = _resolve_start_token(item, test_mode=True)
+        _ensure_known_service(service, all_services)
+        start_service(
+            service,
+            dev_mode=dev_mode,
+            test_mode=True,
+            task=task,
+            verbose=verbose,
+            ignore_override=ignore_override,
+            hold_mode=hold_mode,
+            foreground=foreground,
+            teardown=teardown,
+        )
 
 
 def cmd_restart(args):
     stop_args = copy(args)
-    stop_args.services += getattr(args, "dev", [])
-    stop_args.services += getattr(args, "test", [])
+    stop_tokens = list(getattr(args, "services", []) or [])
+    stop_tokens += getattr(args, "test", []) or []
+    stop_args.services = []
+    for token in stop_tokens:
+        service, _ = _resolve_start_token(token)
+        stop_args.services.append(service)
     print(f"Restarting {stop_args.services}")
 
     cmd_stop(stop_args)
@@ -190,12 +384,9 @@ def cmd_stop(args):
             stop_service(service, verbose)
         return
 
-    for service in args.services:
-        if service not in all_services:
-            print(f"Error: Unknown service '{service}'", file=sys.stderr)
-            print_available_services()
-            sys.exit(1)
-
+    for token in args.services:
+        service, _ = _resolve_start_token(token)
+        _ensure_known_service(service, all_services)
         stop_service(service, verbose)
 
 
@@ -227,40 +418,35 @@ def print_available_services():
 
 def parse_preset_services(service_list):
     """
-    Split a preset service list into normal, dev, and test service groups.
+    Parse a preset service list into per-service start specs.
 
-    Tokens ``--dev``, ``--test``, and ``--normal`` act as mode toggles;
-    all subsequent service names are assigned to the active mode.
+    Tokens ``--dev`` and ``--test`` are sticky flags for subsequent
+    services (combinable). ``--normal`` clears both flags.
 
     Parameters
     ----------
     service_list : list[str]
-        Mixed list of service names and mode-toggle flags.
+        Mixed list of service tokens and mode flags.
 
     Returns
     -------
-    services : list[str]
-    dev_services : list[str]
-    test_services : list[str]
+    list[tuple[str, bool, bool]]
+        Each entry is ``(token, dev_mode, test_mode)``.
     """
-    services = []
-    dev_services = []
-    test_services = []
-    mode = "normal"
+    entries = []
+    dev_mode = False
+    test_mode = False
     for item in service_list:
         if item == "--dev":
-            mode = "dev"
+            dev_mode = True
         elif item == "--test":
-            mode = "test"
+            test_mode = True
         elif item == "--normal":
-            mode = "normal"
-        elif mode == "dev":
-            dev_services.append(item)
-        elif mode == "test":
-            test_services.append(item)
+            dev_mode = False
+            test_mode = False
         else:
-            services.append(item)
-    return services, dev_services, test_services
+            entries.append((item, dev_mode, test_mode))
+    return entries
 
 
 def make_cmd_preset(preset_name):
@@ -277,18 +463,27 @@ def make_cmd_preset(preset_name):
     callable
         Argparse command handler accepting an ``args`` namespace.
     """
+
     def cmd_preset(args):
         presets = get_presets()
         service_list = presets[preset_name]
-        services, dev_services, test_services = parse_preset_services(service_list)
+        entries = parse_preset_services(service_list)
         verbose = getattr(args, "verbose", False)
+        foreground = getattr(args, "foreground", False)
+        teardown = getattr(args, "teardown", False)
         print(f"Running preset '{preset_name}'...")
-        for service in services:
-            start_service(service, verbose=verbose)
-        for service in dev_services:
-            start_service(service, dev_mode=True, verbose=verbose)
-        for service in test_services:
-            start_service(service, test_mode=True, verbose=verbose)
+        for token, dev_mode, test_mode in entries:
+            service, task = _resolve_start_token(token, test_mode=test_mode)
+            start_service(
+                service,
+                dev_mode=dev_mode,
+                test_mode=test_mode,
+                task=task,
+                verbose=verbose,
+                foreground=foreground,
+                teardown=teardown,
+            )
+
     return cmd_preset
 
 
@@ -303,6 +498,27 @@ def cmd_list_presets(args):
         print(f"  {name}: {service_list}")
 
 
+def add_run_mode_args(parser):
+    """
+    Add foreground/teardown flags shared by start and presets.
+
+    Parameters
+    ----------
+    parser : argparse.ArgumentParser
+        Parser to extend.
+    """
+    parser.add_argument(
+        "--foreground",
+        action="store_true",
+        help="Run services in the foreground (implied by --test)",
+    )
+    parser.add_argument(
+        "--teardown",
+        action="store_true",
+        help="Tear down foreground services after they exit",
+    )
+
+
 def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(
@@ -310,40 +526,94 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
+    image_options = argparse.ArgumentParser(add_help=False)
+    add_image_option_args(image_options)
+
+    run_mode_options = argparse.ArgumentParser(add_help=False)
+    add_run_mode_args(run_mode_options)
+
     subparsers = parser.add_subparsers(dest="command", help="Command to execute")
 
-    start_parser = subparsers.add_parser("start", help="Start services")
+    start_parser = subparsers.add_parser(
+        "start",
+        parents=[image_options, run_mode_options],
+        help="Start services",
+    )
     start_parser.add_argument(
         "services",
         nargs="*",
-        help="Services to start (use --dev before service name for dev mode)",
+        help=(
+            "Services to start as SERVICE or SERVICE=PIXI_TASK "
+            "(e.g. queueserver=qs-dev)"
+        ),
     )
     start_parser.add_argument(
-        "--dev", nargs="*", help="Services to start in development mode", default=[]
+        "--dev",
+        action="store_true",
+        help=(
+            "Stack development mounts for all services in this command "
+            "(combinable with --test)"
+        ),
     )
-    start_parser.add_argument("--test", nargs="*", help="Services to start in test mode", default=[])
-    start_parser.add_argument("--hold", action="store_true", help="Do not run any command, but hold all services after starting")
-    start_parser.add_argument("--ignore-override", action="store_true", help="Ignore override files")
+    start_parser.add_argument(
+        "--test",
+        nargs="*",
+        help=(
+            "Services with test mounts, foreground run, and default test task "
+            "(queueserver -> qs-pytest unless SERVICE=TASK is given). "
+            "Combine with --dev for development mounts on the same services."
+        ),
+        default=[],
+    )
+    start_parser.add_argument(
+        "--hold",
+        action="store_true",
+        help="Do not run any command, but hold all services after starting",
+    )
+    start_parser.add_argument(
+        "--ignore-override",
+        action="store_true",
+        help="Ignore override files",
+    )
     start_parser.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose output"
     )
     start_parser.set_defaults(func=cmd_start)
 
-    restart_parser = subparsers.add_parser("restart", help="Restart services")
+    restart_parser = subparsers.add_parser(
+        "restart", parents=[image_options, run_mode_options], help="Restart services"
+    )
     restart_parser.add_argument(
         "services",
         nargs="*",
-        help="Services to restart (use --dev before service name for dev mode)",
+        help="Services to restart (SERVICE or SERVICE=PIXI_TASK)",
     )
     restart_parser.add_argument(
-        "--dev", nargs="*", help="Restart services in development mode", default=[]
+        "--dev",
+        action="store_true",
+        help="Stack development mounts for all services in this command",
+    )
+    restart_parser.add_argument(
+        "--test", nargs="*", help="Restart services in test mode", default=[]
+    )
+    restart_parser.add_argument(
+        "--hold",
+        action="store_true",
+        help="Do not run any command, but hold all services after starting",
+    )
+    restart_parser.add_argument(
+        "--ignore-override",
+        action="store_true",
+        help="Ignore override files",
     )
     restart_parser.add_argument(
         "-v", "--verbose", action="store_true", help="Verbose output"
     )
     restart_parser.set_defaults(func=cmd_restart)
 
-    stop_parser = subparsers.add_parser("stop", help="Stop services")
+    stop_parser = subparsers.add_parser(
+        "stop", parents=[image_options], help="Stop services"
+    )
     stop_parser.add_argument(
         "services",
         nargs="*",
@@ -354,9 +624,6 @@ def main():
     )
     stop_parser.set_defaults(func=cmd_stop)
 
-    #demo_parser = subparsers.add_parser("demo", help="Start demo services")
-    #demo_parser.set_defaults(func=cmd_demo)
-
     list_parser = subparsers.add_parser("list", help="List available services")
     list_parser.set_defaults(func=cmd_list)
 
@@ -365,7 +632,9 @@ def main():
 
     for preset_name, service_list in get_presets().items():
         preset_parser = subparsers.add_parser(
-            preset_name, help=f"Run preset '{preset_name}': {service_list}"
+            preset_name,
+            parents=[image_options, run_mode_options],
+            help=f"Run preset '{preset_name}': {service_list}",
         )
         preset_parser.add_argument(
             "-v", "--verbose", action="store_true", help="Verbose output"
@@ -378,6 +647,7 @@ def main():
         parser.print_help()
         sys.exit(1)
 
+    apply_image_options(args)
     args.func(args)
 
 

@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 set -e
 set -o xtrace
+PACKAGE_DIR=/usr/local/src/collection_packages
 pip install git+https://github.com/cjtitus/caproto.git@no_macros
-pip install -e /usr/local/src/xraygui/nbs-sim
-$(dirname "$0")/sim-start.sh
+pip install -e $PACKAGE_DIR/nbs-sim
