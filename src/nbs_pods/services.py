@@ -86,11 +86,13 @@ def discover_gui_services():
     beamline_pods_dir = get_beamline_pods_dir()
     nbs_pods_dir = get_nbs_pods_dir()
 
-    if beamline_pods_dir == nbs_pods_dir:
-        return []
-
     services = ["gui", "viewer"]
 
+    # Just return known services if we are in nbs-pods
+    if beamline_pods_dir == nbs_pods_dir:
+        return services
+
+    # Discover additional GUI services in beamline-pods by looking for x11/wayland compose
     compose_dir = beamline_pods_dir / "compose"
     if compose_dir.exists():
         for item in compose_dir.iterdir():

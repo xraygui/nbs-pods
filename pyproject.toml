@@ -48,7 +48,7 @@ exclude = [
     "**/*.log",
 ]
 
-[tool.pixi.project]
+[tool.pixi.workspace]
 name = "nbs-pods"
 channels = ["conda-forge"]
 platforms = ["linux-64"]
@@ -78,3 +78,4 @@ stop = "nbs-pods stop"
 demo = "nbs-pods demo"
 list = "nbs-pods list"
 create = "nbs-pods-create"
+build-images = "scripts/build-images.sh"

@@ -17,7 +17,7 @@ sc = { threshold = 0.1 }
 ref = { threshold = 0.1 }
 
 [settings]
-modules = ['nbs_bl.startup']
+startup_modules = ['nbs_bl.startup']
 
 [settings.plans]
 xas = ['regions.toml']

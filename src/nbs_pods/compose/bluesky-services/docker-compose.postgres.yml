@@ -2,7 +2,7 @@ services:
   tiled_server:
     image: ghcr.io/bluesky/tiled:0.2.10-rc2
     environment:
-      - TILED_SINGLE_USER_API_KEY=${TILED_SINGLE_USER_API_KEY}
+      - TILED_SINGLE_USER_API_KEY
       - TILED_CATALOG_URI=postgresql://tiled:${POSTGRES_PASSWORD}@postgres:5432/tiled_catalog
       - TILED_CATALOG_WRITABLE_STORAGE=["file:///storage", "postgresql://tiled:${POSTGRES_PASSWORD}@postgres:5432/tiled_storage"]
       - TILED_STREAMING_CACHE_URI=redis://:${REDIS_PASSWORD}@redisTiled:6379

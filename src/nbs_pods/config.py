@@ -11,6 +11,9 @@ except ImportError:
     except ImportError:
         tomllib = None
 
+LOCAL_IMAGE_REG = "localhost/nbs-"
+DEFAULT_IMAGE_REG = "ghcr.io/xraygui/nbs-pods/"
+
 
 def get_nbs_pods_dir():
     """
@@ -105,7 +108,8 @@ def get_presets():
     Get the presets dictionary from the merged pods configuration.
 
     Each key is a preset name and each value is a list of service tokens,
-    where ``--dev`` and ``--test`` act as mode toggles for subsequent entries.
+    where ``--dev`` and ``--test`` are sticky flags for subsequent entries
+    (combinable) and ``--normal`` clears both.
 
     Returns
     -------
