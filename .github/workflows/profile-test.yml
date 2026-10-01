@@ -150,7 +150,9 @@ jobs:
         run: |
           set -euo pipefail
 
-          pixi run start --image-tag "${NBS_IMAGE_TAG}" --test --teardown queueserver
+          # --test uses nargs="*", so the service name must follow --test
+          # (not come after another flag like --teardown).
+          pixi run start --image-tag "${NBS_IMAGE_TAG}" --teardown --test queueserver
 
       - name: Tear down minimal pods
         if: ${{ always() }}
