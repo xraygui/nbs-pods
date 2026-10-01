@@ -9,6 +9,6 @@ def test_nbs_count(RE, db):
 
 
 def test_nbs_energy_scan(RE, db):
-    RE(nbs_energy_scan(1800, 1.0, 1805, dwell=1.0))
+    RE(nbs_energy_scan(500, 1.0, 505, dwell=1.0))
     run = db[-1]
     assert run.primary["data"]["time"].shape == (6,)
