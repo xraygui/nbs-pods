@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Set up Pixi
         uses: prefix-dev/setup-pixi@v0.9.5
@@ -51,6 +53,81 @@ jobs:
 
           pixi run list | tee pods-list.txt
           grep -q "Available services" pods-list.txt
+
+      - name: Unit tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          pixi run test-unit
+
+      - name: Create and smoke-test child pods package
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          CHILD_ROOT="${RUNNER_TEMP}/child-pods"
+          mkdir -p "${CHILD_ROOT}"
+          pixi run create cispike "${CHILD_ROOT}" --no-git
+          CHILD_DIR="${CHILD_ROOT}/cispike-pods"
+
+          test -f "${CHILD_DIR}/pyproject.toml"
+          test -f "${CHILD_DIR}/src/cispike_pods/deploy.py"
+          test -f "${CHILD_DIR}/src/cispike_pods/config/ipython/profile_default/startup/beamline.toml"
+          test -f "${CHILD_DIR}/src/cispike_pods/config/ipython/profile_default/startup/devices.toml"
+          if grep -q '\${BEAMLINE_NAME}\|\${NBS_PODS_PIN}' "${CHILD_DIR}/pyproject.toml"; then
+            echo "Unresolved template placeholder in child pyproject.toml" >&2
+            cat "${CHILD_DIR}/pyproject.toml" >&2
+            exit 1
+          fi
+          grep -E '^nbs-pods = ">=' "${CHILD_DIR}/pyproject.toml"
+
+          python3 - <<PY
+          import re
+          from pathlib import Path
+
+          child_dir = Path("${CHILD_DIR}")
+          workspace = Path("${{ github.workspace }}").resolve()
+          pyproject = child_dir / "pyproject.toml"
+          text = pyproject.read_text(encoding="utf-8")
+          new_text, count = re.subn(
+              r'^nbs-pods = ".*"$',
+              f'nbs-pods = {{ path = "{workspace}", editable = true }}',
+              text,
+              count=1,
+              flags=re.MULTILINE,
+          )
+          if count != 1:
+              raise SystemExit(f"expected one nbs-pods pin to rewrite in {pyproject}")
+          pyproject.write_text(new_text, encoding="utf-8")
+          print(f"Rewrote nbs-pods dependency to path={workspace}")
+          PY
+
+          cd "${CHILD_DIR}"
+          pixi install
+          pixi run list | tee child-list.txt
+          grep -q "Available services" child-list.txt
+
+          OVERRIDE_DIR="${CHILD_DIR}/src/cispike_pods/compose/queueserver"
+          mkdir -p "${OVERRIDE_DIR}"
+          cat > "${OVERRIDE_DIR}/docker-compose.override.yml" <<'EOF'
+          services:
+            queueserver:
+              environment:
+                - NBS_CHILD_COMPOSE_PROBE=1
+          EOF
+
+          cd "${{ github.workspace }}"
+          BEAMLINE_PODS_DIR="${CHILD_DIR}/src/cispike_pods" pixi run python - <<'PY'
+          from nbs_pods.compose import build_compose_file_string
+
+          composed = build_compose_file_string(
+              "queueserver",
+              override_keys=["override"],
+          )
+          print(composed)
+          if "cispike_pods/compose/queueserver/docker-compose.override.yml" not in composed:
+              raise SystemExit("beamline override was not selected by compose resolution")
+          PY
 
       - name: Start bluesky-services
         shell: bash
@@ -101,12 +178,14 @@ jobs:
         run: |
           set -euo pipefail
 
-          pixi run start --image-tag "${NBS_IMAGE_TAG}" --test --teardown queueserver
+          # --test uses nargs="*", so the service name must follow --test
+          # (not come after another flag like --teardown).
+          pixi run start --image-tag "${NBS_IMAGE_TAG}" --teardown --test queueserver
 
       - name: Tear down minimal pods
         if: ${{ always() }}
         shell: bash
         run: |
           set -euo pipefail
-          pixi run stop queueserver sim bluesky-services || true
+          pixi run stop sim bluesky-services || true
           podman ps -a || true

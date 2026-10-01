@@ -75,11 +75,13 @@ Use `workflow_dispatch` on the retag workflow only for recovery (for example, re
 | [promote-build-to-latest.yml](workflows/promote-build-to-latest.yml) | Push to `master`, or manual | Retag `:build` → `:latest` |
 | [retag-release.yml](workflows/retag-release.yml) | Tag `v*`, or manual | Promote `:latest` → `:VERSION` and `:MAJOR.MINOR` |
 | [python-publish.yml](workflows/python-publish.yml) | GitHub Release published | Build and upload the Python package to PyPI |
-| [profile-test.yml](workflows/profile-test.yml) | PR (uses `:build`), push to `master`/`main` (uses `:latest`), or manual | Start sim stack and run profile pytest via queueserver `--test` |
+| [profile-test.yml](workflows/profile-test.yml) | PR (uses `:build`), push to `master`/`main` (uses `:latest`), or manual | Unit tests; create a throwaway child and smoke its CLI/compose resolution; start sim stack and run profile pytest via queueserver `--test` |
 
 ## Testing
 
 Profile tests live under `src/nbs_pods/config/ipython/profile_default/tests/` and run inside IPython after the demo profile starts.
+
+CI also exercises child-repo creation: it runs `nbs-pods-create` (which pins `nbs-pods` to a PyPI version range from the current release), rewrites that pin to the checked-out tree for the PR, `pixi install`s the child, smokes the child CLI (`list`), and checks that beamline compose overrides resolve correctly. The full sim/`--test` stack still runs against the parent nbs-pods checkout — a blank child is not expected to be a runnable profile.
 
 ### Local images
 
@@ -97,7 +99,7 @@ Then point the CLI at those images with `--local` (no env export needed):
 
 ```bash
 nbs-pods start --local bluesky-services sim
-nbs-pods start --local --test --teardown queueserver
+nbs-pods start --local --teardown --test queueserver
 # or
 nbs-pods test --local --teardown
 ```
@@ -110,7 +112,7 @@ With published GHCR images:
 
 ```bash
 nbs-pods start bluesky-services sim
-nbs-pods start --test --teardown queueserver
+nbs-pods start --teardown --test queueserver
 ```
 
 Or the preset: `nbs-pods test --teardown`
@@ -119,11 +121,11 @@ Against the pre-merge candidate: `nbs-pods test --image-tag build`
 
 With locally built images: `nbs-pods test --local --teardown`
 
-`--test queueserver` stacks `compose/queueserver/docker-compose.test.yml`, runs in the foreground with default task `qs-pytest` (override with `queueserver=qs-dev-pytest`), and only tears down if you pass `--teardown`. `--dev` is a boolean that stacks development mounts on every service in the same command (including `--test` services). Pick the pixi task with `SERVICE=TASK`:
+`--test` takes the service names that follow it (`nargs="*"`), so put them immediately after `--test` — not after another flag like `--teardown`. It stacks `compose/queueserver/docker-compose.test.yml`, runs in the foreground with default task `qs-pytest` (override with `queueserver=qs-dev-pytest`), and only tears down if you pass `--teardown`. `--dev` is a boolean that stacks development mounts on every service in the same command (including `--test` services). Pick the pixi task with `SERVICE=TASK`:
 
 ```bash
 nbs-pods start --dev bluesky-services sim queueserver=qs-dev
-nbs-pods start --dev --test --teardown queueserver=qs-dev-pytest
+nbs-pods start --dev --teardown --test queueserver=qs-dev-pytest
 ```
 
 Beamline repos that ship their own `docker-compose.test.yml` override the test mounts.
