@@ -88,7 +88,7 @@ Build images into the local prefix `localhost/nbs-<name>:latest` (does not touch
 ```bash
 pixi run build-images
 # or a subset (built one at a time):
-pixi run build-images -- queueserver sim
+pixi run build-images queueserver sim
 ```
 
 Builds run **serially**. Building several large pixi-based images in parallel from the same base often fails in podman with `io: read/write on closed pipe` while committing layers.

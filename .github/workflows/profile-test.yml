@@ -46,8 +46,8 @@ jobs:
         run: |
           set -euo pipefail
 
-          pixi run nbs-pods -- --help
-          pixi run podman-compose -- --version || true
+          pixi run nbs-pods --help
+          pixi run podman-compose --version || true
 
           pixi run list | tee pods-list.txt
           grep -q "Available services" pods-list.txt
@@ -60,7 +60,7 @@ jobs:
           podman --version
           podman info --debug || true
 
-          pixi run start -- --image-tag "${NBS_IMAGE_TAG}" bluesky-services
+          pixi run start --image-tag "${NBS_IMAGE_TAG}" bluesky-services
 
           for i in $(seq 1 60); do
             echo "wait_iter=${i}"
@@ -81,7 +81,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          pixi run start -- --image-tag "${NBS_IMAGE_TAG}" sim
+          pixi run start --image-tag "${NBS_IMAGE_TAG}" sim
 
           for _ in $(seq 1 60); do
             timeout 10s podman ps --format '{{.Names}}' | tee podman-ps.txt
@@ -101,12 +101,12 @@ jobs:
         run: |
           set -euo pipefail
 
-          pixi run start -- --image-tag "${NBS_IMAGE_TAG}" --test --teardown queueserver
+          pixi run start --image-tag "${NBS_IMAGE_TAG}" --test --teardown queueserver
 
       - name: Tear down minimal pods
         if: ${{ always() }}
         shell: bash
         run: |
           set -euo pipefail
-          pixi run stop -- queueserver sim bluesky-services || true
+          pixi run stop queueserver sim bluesky-services || true
           podman ps -a || true
