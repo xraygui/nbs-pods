@@ -1,0 +1,38 @@
+name: Promote Build Images to Latest
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - name: Log in to Container Registry
+      uses: docker/login-action@v4
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Set IMAGE_NAME for GHCR
+      shell: bash
+      run: echo "IMAGE_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_ENV"
+
+    - name: Retag :build as :latest
+      run: |
+        REPO="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+        for image in bluesky queueserver gui viewer sim; do
+          echo "Promoting ${REPO}/${image}:build -> :latest"
+          docker buildx imagetools create \
+            --tag "${REPO}/${image}:latest" \
+            "${REPO}/${image}:build"
+        done

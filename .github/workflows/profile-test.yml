@@ -5,12 +5,18 @@ on:
   push:
     branches: [ "main", "master" ]
   workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "NBS_IMAGE_TAG override (e.g. build, latest)"
+        required: false
+        default: ""
 
 jobs:
   pods-smoke-test:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      packages: read
 
     steps:
       - name: Checkout repository
@@ -20,6 +26,20 @@ jobs:
         uses: prefix-dev/setup-pixi@v0.9.5
         with:
           cache: true
+
+      - name: Select image tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -n "${{ inputs.image_tag }}" ]]; then
+            TAG="${{ inputs.image_tag }}"
+          elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            TAG="build"
+          else
+            TAG="latest"
+          fi
+          echo "NBS_IMAGE_TAG=${TAG}" >> "$GITHUB_ENV"
+          echo "Using NBS_IMAGE_TAG=${TAG}"
 
       - name: Pods CLI smoke test
         shell: bash
@@ -40,7 +60,7 @@ jobs:
           podman --version
           podman info --debug || true
 
-          pixi run start -- bluesky-services
+          pixi run start -- --image-tag "${NBS_IMAGE_TAG}" bluesky-services
 
           for i in $(seq 1 60); do
             echo "wait_iter=${i}"
@@ -61,7 +81,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          pixi run start -- sim
+          pixi run start -- --image-tag "${NBS_IMAGE_TAG}" sim
 
           for _ in $(seq 1 60); do
             timeout 10s podman ps --format '{{.Names}}' | tee podman-ps.txt
@@ -81,7 +101,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          pixi run start -- --test queueserver
+          pixi run start -- --image-tag "${NBS_IMAGE_TAG}" --test --teardown queueserver
 
       - name: Tear down minimal pods
         if: ${{ always() }}
