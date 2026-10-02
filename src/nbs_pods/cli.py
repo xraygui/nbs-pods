@@ -8,9 +8,9 @@ from copy import copy
 
 from nbs_pods.compose import build_compose_file_string, get_service_variants
 from nbs_pods.config import (
-    LOCAL_IMAGE_REG,
     get_beamline_pods_dir,
     get_demo_services,
+    get_local_image_reg,
     get_nbs_pods_dir,
     get_presets,
 )
@@ -51,13 +51,17 @@ def apply_image_options(args):
     """
     Apply ``--local`` / ``--image-reg`` / ``--image-tag`` to the process env.
 
+    ``--local`` sets ``NBS_IMAGE_REG`` via ``get_local_image_reg()``
+    (``localhost/<BEAMLINE_NAME>-`` when set, else ``localhost/nbs-``).
+    ``--image-reg`` overrides that value when both are given.
+
     Parameters
     ----------
     args : argparse.Namespace
         Parsed CLI arguments. Missing attributes are ignored.
     """
     if getattr(args, "local", False):
-        os.environ["NBS_IMAGE_REG"] = LOCAL_IMAGE_REG
+        os.environ["NBS_IMAGE_REG"] = get_local_image_reg()
     image_reg = getattr(args, "image_reg", None)
     if image_reg:
         os.environ["NBS_IMAGE_REG"] = image_reg
@@ -86,8 +90,8 @@ def add_image_option_args(parser):
         "--local",
         action="store_true",
         help=(
-            f"Use locally built images with prefix {LOCAL_IMAGE_REG} "
-            "(from pixi run build-images)"
+            "Use locally built images "
+            "(localhost/<BEAMLINE_NAME>- if set, else localhost/nbs-)"
         ),
     )
     parser.add_argument(
