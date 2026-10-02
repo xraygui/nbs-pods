@@ -15,6 +15,24 @@ LOCAL_IMAGE_REG = "localhost/nbs-"
 DEFAULT_IMAGE_REG = "ghcr.io/xraygui/nbs-pods/"
 
 
+def get_local_image_reg():
+    """
+    Return the local image name prefix for ``--local``.
+
+    When ``BEAMLINE_NAME`` is set, use ``localhost/<beamline>-`` so beamline
+    profile collections pick up their own locally built images. Otherwise use
+    ``LOCAL_IMAGE_REG`` (``localhost/nbs-``).
+
+    Returns
+    -------
+    str
+        Image name prefix before the service name.
+    """
+    if beamline_name := os.getenv("BEAMLINE_NAME"):
+        return f"localhost/{beamline_name}-"
+    return LOCAL_IMAGE_REG
+
+
 def get_nbs_pods_dir():
     """
     Get the nbs-pods package data directory.
