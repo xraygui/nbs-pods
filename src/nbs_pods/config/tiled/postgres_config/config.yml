@@ -24,6 +24,9 @@ catalog:
   specs: [{"name": "CatalogOfBlueskyRuns", "version": "3.0"}]
   readable_storage:
     - /nsls2/data/sst/proposals
+media_types:
+  BlueskyRun:
+    application/json-seq: bluesky_tiled_plugins.exporters:json_seq_exporter
 routers:
   - bluesky_tiled_plugins.routers.validator:router
 
