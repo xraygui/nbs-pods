@@ -1,6 +1,6 @@
 services:
   tiled_server:
-    image: ghcr.io/bluesky/tiled:0.2.10-rc2
+    image: ghcr.io/nsls2/databroker-nsls2:main
     environment:
       - TILED_SINGLE_USER_API_KEY
       - TILED_CATALOG_URI=postgresql://tiled:${POSTGRES_PASSWORD}@postgres:5432/tiled_catalog

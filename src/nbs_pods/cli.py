@@ -53,19 +53,23 @@ def apply_image_options(args):
 
     ``--local`` sets ``NBS_IMAGE_REG`` via ``get_local_image_reg()``
     (``localhost/<BEAMLINE_NAME>-`` when set, else ``localhost/nbs-``).
-    ``--image-reg`` overrides that value when both are given.
+    Unless ``--image-tag`` is also given, ``--local`` sets ``NBS_IMAGE_TAG``
+    to ``latest`` so a profile-pinned release tag does not apply to local builds.
+    ``--image-reg`` overrides the registry prefix when both are given.
 
     Parameters
     ----------
     args : argparse.Namespace
         Parsed CLI arguments. Missing attributes are ignored.
     """
+    image_tag = getattr(args, "image_tag", None)
     if getattr(args, "local", False):
         os.environ["NBS_IMAGE_REG"] = get_local_image_reg()
+        if not image_tag:
+            os.environ["NBS_IMAGE_TAG"] = "latest"
     image_reg = getattr(args, "image_reg", None)
     if image_reg:
         os.environ["NBS_IMAGE_REG"] = image_reg
-    image_tag = getattr(args, "image_tag", None)
     if image_tag:
         os.environ["NBS_IMAGE_TAG"] = image_tag
     if os.environ.get("NBS_IMAGE_REG") or os.environ.get("NBS_IMAGE_TAG"):
@@ -91,7 +95,8 @@ def add_image_option_args(parser):
         action="store_true",
         help=(
             "Use locally built images "
-            "(localhost/<BEAMLINE_NAME>- if set, else localhost/nbs-)"
+            "(localhost/<BEAMLINE_NAME>- if set, else localhost/nbs-) "
+            "and tag latest unless --image-tag is set"
         ),
     )
     parser.add_argument(
