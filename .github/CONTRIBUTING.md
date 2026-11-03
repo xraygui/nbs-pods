@@ -104,7 +104,7 @@ nbs-pods start --local --teardown --test queueserver
 nbs-pods test --local --teardown
 ```
 
-`--local` sets `NBS_IMAGE_REG=localhost/nbs-`, or `localhost/<BEAMLINE_NAME>-` when `BEAMLINE_NAME` is set (e.g. beamline profile wrappers). Override further with `--image-reg` / `--image-tag` if needed. Without `--local`, compose uses the default GHCR prefix (`:latest` unless you pass `--image-tag build`).
+`--local` sets `NBS_IMAGE_REG=localhost/nbs-`, or `localhost/<BEAMLINE_NAME>-` when `BEAMLINE_NAME` is set (e.g. beamline profile wrappers). It also sets `NBS_IMAGE_TAG=latest` unless you pass `--image-tag`. Override further with `--image-reg` / `--image-tag` if needed. Without `--local`, compose uses the default GHCR prefix and `${NBS_IMAGE_TAG:-latest}` (profiles may export a release pin via `NBS_IMAGE_TAG`).
 
 ### Profile pytest
 
