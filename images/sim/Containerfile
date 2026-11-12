@@ -3,4 +3,11 @@ FROM ${BASE_IMAGE}
 
 RUN pixi install -e sim && rm -rf ~/.cache/rattler
 
+# Beamline packages whose sim classes this image runs, as space-separated pip
+# arguments, e.g. for the HAXPES analyzer:
+#   --build-arg SIM_EXTRAS="git+https://github.com/xraygui/peak-ioc git+https://github.com/NSLS-II-SST/haxpes"
+# nbs-sim finds their classes through the nbs_sim.loaders entry point.
+ARG SIM_EXTRAS=""
+RUN if [ -n "$SIM_EXTRAS" ]; then pixi run -e sim pip install $SIM_EXTRAS; fi
+
 CMD ["pixi", "run", "sim"]

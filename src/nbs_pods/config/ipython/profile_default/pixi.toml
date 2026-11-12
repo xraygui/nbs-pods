@@ -91,6 +91,7 @@ viewer-dev = { depends-on = ["viewer-dev-install", "viewer"] }
 
 [feature.sim.tasks]
 sim = "scripts/sim-start.sh"
+sim-process = "scripts/sim-process-start.sh"
 sim-dev-install = "scripts/sim-dev-install.sh"
 sim-dev = { depends-on = ["sim-dev-install", "sim"] }
 

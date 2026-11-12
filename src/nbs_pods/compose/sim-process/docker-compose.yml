@@ -1,0 +1,21 @@
+version: '3'
+
+networks:
+  bluesky-services_bluesky:
+    external: true
+
+# An extra nbs-sim process: runs the devices whose sim_conf.toml entry has
+# _process = "$NBS_SIM_PROCESS" (default "analyzer"), from the same image and
+# startup dir as the sim service, which runs all the others. For a second
+# extra process, copy this directory in the beamline pods (as
+# compose/sim-<name>), rename the service and set NBS_SIM_PROCESS.
+services:
+  sim-process:
+    image: ${NBS_IMAGE_REG:-ghcr.io/xraygui/nbs-pods/}sim:${NBS_IMAGE_TAG:-latest}
+    command: pixi run ${NBS_PIXI_TASK:-sim-process}
+    environment:
+      - NBS_SIM_PROCESS=${NBS_SIM_PROCESS:-analyzer}
+    dns:
+      - 10.89.0.1
+    networks:
+      - bluesky-services_bluesky

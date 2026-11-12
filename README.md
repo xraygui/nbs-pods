@@ -75,6 +75,7 @@ podman-compose -f docker-compose.build.yml build
 - **queueserver**: RE Manager for experiment orchestration
 - **gui**: NBS GUI with display protocol detection (Wayland/X11)
 - **sim**: NBS simulation services
+- **sim-process**: an extra nbs-sim process for the devices with `_process = "$NBS_SIM_PROCESS"` in sim_conf.toml (default `analyzer`), from the same image and startup dir
 - **viewer**: Additional viewing services (if configured)
 
 ## Development Workflow
